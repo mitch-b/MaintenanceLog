@@ -1,0 +1,12 @@
+**/app.db
+**/app.db-shm
+**/app.db-wal
+
+# directories
+**/bin/
+**/obj/
+**/out/
+
+# files
+Dockerfile*
+**/*.md
