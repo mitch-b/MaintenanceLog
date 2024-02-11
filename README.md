@@ -52,6 +52,14 @@ To run with a sidecar SQL database container, use the provided [`docker-compose.
 
 If you're a GitHub user, try in Codespaces!
 
+When in Codespace, open the terminal and trust the developer HTTPS certificate:
+
+```bash
+dotnet dev-certs https --trust
+```
+
+Then it will run by launching the forwarded **HTTP** port! (not HTTPS)
+
 Otherwise, for local development:
 
 * [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
