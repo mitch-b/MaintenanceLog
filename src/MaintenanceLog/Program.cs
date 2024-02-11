@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceLog.Client.Pages;
@@ -6,6 +6,7 @@ using MaintenanceLog.Components;
 using MaintenanceLog.Components.Account;
 using MaintenanceLog.Data;
 using MaintenanceLog.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,8 +37,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
 builder.Services
     .AddFluentEmail(builder.Configuration.GetValue<string>("EmailConfig:SmtpFrom"))
     .AddSmtpSender(
@@ -45,7 +44,7 @@ builder.Services
         builder.Configuration.GetValue<int?>("EmailConfig:SmtpPort") ?? 587,
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpUser"),
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpPass"));
-//builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
