@@ -1,7 +1,16 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Maintenance Log</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Maintenance Logs</h1>
 
-Welcome to your new app.
+<AuthorizeView>
+    <NotAuthorized>
+        Sign in to get started.
+    </NotAuthorized>
+    <Authorized>
+        Hello @context.User.Identity?.Name!
+    </Authorized>
+</AuthorizeView>
+
+
