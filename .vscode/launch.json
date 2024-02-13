@@ -5,7 +5,10 @@
       "name": "Launch and Debug Blazor",
       "type": "blazorwasm",
       "request": "launch",
-      "cwd": "${workspaceFolder}/src/MaintenanceLog"
+      "cwd": "${workspaceFolder}/src/MaintenanceLog",
+      "dotNetConfig": {
+        "preLaunchTask": "free-ports"
+      }
     }
   ]
 }
