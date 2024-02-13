@@ -1,9 +1,9 @@
 {
     "name": "maintenance-log",
-    "build": {
-        "dockerfile": "./Dockerfile",
-        "context": "."
-    },
+    "dockerComposeFile":[
+        "docker-compose.yml"
+    ],
+    "service": "maintenance-log",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": "true",
@@ -22,7 +22,8 @@
                 "EditorConfig.EditorConfig",
                 "GitHub.copilot-chat",
                 "github.vscode-github-actions",
-                "ms-dotnettools.csharp"
+                "ms-dotnettools.csharp",
+                "ms-mssql.mssql"
             ]
         }
     },
@@ -52,6 +53,8 @@
     //      "mounts": [ "source=${env:HOME}${env:USERPROFILE}/.aspnet/https,target=/home/vscode/.aspnet/https,type=bind" ],
     // Use 'postCreateCommand' to run commands after the container is created.
     // "postCreateCommand": "dotnet restore",
+	"postCreateCommand": "bash ./.devcontainer/postCreate.sh",
     // Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "vscode"
+    "remoteUser": "vscode",
+    "workspaceFolder": "/workspace"
 }

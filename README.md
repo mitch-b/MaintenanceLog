@@ -52,13 +52,9 @@ To run with a sidecar SQL database container, use the provided [`docker-compose.
 
 If you're a GitHub user, try in Codespaces!
 
-When in Codespace, open the terminal and trust the developer HTTPS certificate:
+When in Codespaces, the database starts automatically, so you're instantly ready to go.
 
-```bash
-dotnet dev-certs https --trust
-```
-
-Then it will run by launching the forwarded **HTTP** port! (not HTTPS)
+You can also see this within Visual Studio Code opening in Dev Container.
 
 Otherwise, for local development:
 
