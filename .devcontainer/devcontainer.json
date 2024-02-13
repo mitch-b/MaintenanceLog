@@ -5,13 +5,6 @@
     ],
     "service": "maintenance-log",
     "features": {
-        "ghcr.io/devcontainers/features/common-utils:2": {
-            "installZsh": "true",
-            "username": "vscode",
-            "userUid": "1000",
-            "userGid": "1000",
-            "upgradePackages": "true"
-        }
     },
     // Configure tool-specific properties.
     "customizations": {
