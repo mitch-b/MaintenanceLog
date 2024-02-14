@@ -1,13 +1,12 @@
 version: '3.8'
 
 services:
-  maintenance-log:
+  app:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     volumes:
-      - ..:/workspace:cached
-      - $HOME/.ssh/:/home/vscode/.ssh/
+      - ../..:/workspaces:cached
     depends_on:
       - db
     environment:
@@ -23,7 +22,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: maintenancelog-sql
     environment:
-      MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is public, so whatever works}
+      SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is public, so whatever works}
       ACCEPT_EULA: Y
     volumes:
       - ../mssql/data:/var/opt/mssql/data
