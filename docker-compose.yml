@@ -13,7 +13,7 @@ services:
       MAINTENANCELOG__DATABASE__HOST: db
       MAINTENANCELOG__DATABASE__NAME: ${MAINTENANCELOG_DATABASE_NAME:-MaintenanceLog}
       MAINTENANCELOG__DATABASE__USER: ${MAINTENANCELOG_DATABASE_USER:-sa}
-      MAINTENANCELOG__DATABASE__PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is public, so whatever works}
+      MAINTENANCELOG__DATABASE__PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
       MAINTENANCELOG__DATABASE__DEVDROPDATABASE: "false"
     ports:
       - ${MAINTENANCELOG_PORT:-8080}:8080
@@ -24,11 +24,11 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: maintenancelog-sql
     environment:
-      MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is public, so whatever works}
+      MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
       ACCEPT_EULA: Y
     volumes:
-      - ./mssql/data:/var/opt/mssql/data
-      - ./mssql/log:/var/opt/mssql/log
-      - ./mssql/secrets:/var/opt/mssql/secrets
+      - ./.devcontainer/mssql/data:/var/opt/mssql/data
+      - ./.devcontainer/mssql/log:/var/opt/mssql/log
+      - ./.devcontainer/mssql/secrets:/var/opt/mssql/secrets
     ports:
       - ${MAINTENANCELOG_DATABASE_PORT:-1433}:1433
