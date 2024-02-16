@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=Server=db;Database=MaintenanceLog;User Id=sa;Password=${MAINTENANCELOG_DATABASE_PASSWORD:-This is public, so whatever works}
+      - DATABASE_URL=Server=db;Database=MaintenanceLog;User Id=sa;Password=${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
@@ -21,12 +21,13 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: maintenancelog-sql
+    user: root
     environment:
-      SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is public, so whatever works}
+      MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
       ACCEPT_EULA: Y
     volumes:
-      - ../mssql/data:/var/opt/mssql/data
-      - ../mssql/log:/var/opt/mssql/log
-      - ../mssql/secrets:/var/opt/mssql/secrets
+      - ./mssql/data:/var/opt/mssql/data
+      - ./mssql/log:/var/opt/mssql/log
+      - ./mssql/secrets:/var/opt/mssql/secrets
     ports:
       - ${MAINTENANCELOG_DATABASE_PORT:-1433}:1433 
