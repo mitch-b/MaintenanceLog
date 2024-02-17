@@ -54,6 +54,16 @@ If you're a GitHub user, try in Codespaces!
 
 When in Codespaces, the database starts automatically, so you're instantly ready to go.
 
+After setting up Codespaces secrets in your repo in GitHub, you can apply secrets.
+
+```bash
+cd src/MaintenanceLog
+dotnet user-secrets set EmailConfig:SmtpUser $EMAILCONFIG_SMTPUSER
+dotnet user-secrets set EmailConfig:SmtpPass $EMAILCONFIG_SMTPPASS
+dotnet user-secrets set EmailConfig:SmtpHost $EMAILCONFIG_SMTPHOST
+dotnet user-secrets set EmailConfig:SmtpPort $EMAILCONFIG_SMTPPORT
+```
+
 You can also see this within Visual Studio Code opening in Dev Container.
 
 Otherwise, for local development:
