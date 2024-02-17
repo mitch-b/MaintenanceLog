@@ -28,6 +28,25 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("MaintenanceLogDb") ?? throw new InvalidOperationException("Connection string 'MaintenanceLogDb' not found.");
+// check if Settings.DbProvider is MSSQL
+var dbProvider = builder.Configuration.GetValue<string>("DbProvider");
+if (string.Equals(dbProvider, "MSSQL", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
+else if (string.Equals(dbProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else
+{
+    throw new InvalidOperationException("Invalid database provider.");
+}
+
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -48,11 +67,20 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
+
+    // This section sets up and seeds the database. Seeding is NOT normally
+    // handled this way in production. The following approach is used in this
+    // sample app to make the sample simpler. The app can be cloned. The
+    // connection string is configured. The app can be run.
+    await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+    var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
+    await DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
 }
 else
 {

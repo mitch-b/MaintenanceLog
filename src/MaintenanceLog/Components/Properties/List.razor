@@ -1,0 +1,13 @@
+<!-- list of Property -->
+@using MaintenanceLog.Data;
+@*@inject IPropertyService PropertyService;*@
+
+@code {
+    private List<Property> properties = new List<Property>();
+    private Property selectedProperty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //properties = await PropertyService.GetProperties();
+    }
+}
