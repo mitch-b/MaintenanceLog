@@ -64,6 +64,28 @@ dotnet user-secrets set EmailConfig:SmtpHost $EMAILCONFIG_SMTPHOST
 dotnet user-secrets set EmailConfig:SmtpPort $EMAILCONFIG_SMTPPORT
 ```
 
+To use `sqlite`, use the following appsettings:
+
+```json
+{
+  "ConnectionStrings": {
+    "MaintenanceLogDb": "DataSource=/data/maintenancelogdb.db;Cache=Shared"
+  },
+  "DbProvider": "sqlite"
+}
+```
+
+To use `mssql` in a sidecar container in the Codespace, use the following appsettings:
+
+```json
+{
+  "ConnectionStrings": {
+    "MaintenanceLogDb": "Server=db;Database=maintenancelogdb;User Id=sa;Password='This is publ1c, so whatever works!';MultipleActiveResultSets=true;Encrypt=False;"
+  },
+  "DbProvider": "mssql"
+}
+```
+
 You can also see this within Visual Studio Code opening in Dev Container.
 
 Otherwise, for local development:

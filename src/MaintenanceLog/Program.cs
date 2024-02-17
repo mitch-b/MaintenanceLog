@@ -45,10 +45,6 @@ else
     throw new InvalidOperationException("Invalid database provider.");
 }
 
-
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -63,6 +59,7 @@ builder.Services
         builder.Configuration.GetValue<int?>("EmailConfig:SmtpPort") ?? 587,
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpUser"),
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpPass"));
+        
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
@@ -80,7 +77,7 @@ if (app.Environment.IsDevelopment())
     // connection string is configured. The app can be run.
     await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
     var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
-    await DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
+    await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
 }
 else
 {

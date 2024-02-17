@@ -4,9 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 mssql/
-app.db
-app.db-shm
-app.db-wal
+maintenancelogdb.db
+maintenancelogdb.db-shm
+maintenancelogdb.db-wal
 
 # User-specific files
 *.rsuser
