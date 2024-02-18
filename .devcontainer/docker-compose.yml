@@ -9,8 +9,6 @@ services:
       - ../..:/workspaces:cached
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=Server=db;Database=MaintenanceLog;User Id=sa;Password=${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
