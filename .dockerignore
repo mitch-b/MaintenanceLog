@@ -1,0 +1,8 @@
+**/maintenancelogdb.db
+**/maintenancelogdb.db-shm
+**/maintenancelogdb.db-wal
+
+# directories
+**/bin/
+**/obj/
+**/out/
