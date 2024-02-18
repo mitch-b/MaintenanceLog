@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Forcibly closing processes holding TCP ports open we need"
+
 # Array of ports to check
 ports=(5217 7019)
 

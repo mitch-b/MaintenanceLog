@@ -5,6 +5,9 @@
       "label": "free-ports",
       "type": "shell",
       "command": "./.scripts/free-ports.sh",
+      "windows": {
+        "command": ".\\.scripts\\free-ports.ps1"
+      },
       "problemMatcher": []
     },
     {
