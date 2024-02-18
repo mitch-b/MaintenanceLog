@@ -1,1 +1,1 @@
-C:/src/MaintenanceLog/src/Dockerfile
+/mnt/host/c/src/MaintenanceLog/src/Dockerfile
