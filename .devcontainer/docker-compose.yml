@@ -16,6 +16,7 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: maintenancelog-sql
+    restart: unless-stopped
     user: root
     environment:
       MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
