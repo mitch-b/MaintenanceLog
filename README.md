@@ -101,6 +101,22 @@ docker build -t maintenancelog:local .
 
 ## Local Development
 
+### Entity Framework Migration
+
+The initial migration was added with the following command:
+
+```bash
+# cd src/MaintenanceLog.Data
+dotnet ef migrations add Initial --startup-project ../MaintenanceLog/
+```
+
+And the database can be upgraded with the following command:
+
+```bash
+# cd src/MaintenanceLog.Data
+dotnet ef database update --startup-project ../MaintenanceLog/
+```
+
 ### Secrets Management
 
 ```bash

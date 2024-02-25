@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MaintenanceLog.Data.Services;
+﻿using MaintenanceLog.Data.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +7,7 @@ namespace MaintenanceLog.Data.Extensions
 {
     public static class ServerServiceCollectionExtensions
     {
-        public static IServiceCollection AddDataServices(this IServiceCollection services)
+        public static IServiceCollection AddMaintenanceLogDataServices(this IServiceCollection services)
         {
             var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
             var connectionString = configuration?.GetConnectionString("MaintenanceLogDb") 

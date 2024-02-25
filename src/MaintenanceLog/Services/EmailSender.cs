@@ -1,5 +1,6 @@
 ﻿using FluentEmail.Core;
 using MaintenanceLog.Data;
+using MaintenanceLog.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace MaintenanceLog.Services;

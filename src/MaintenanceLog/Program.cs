@@ -8,6 +8,7 @@ using MaintenanceLog.Data;
 using MaintenanceLog.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,6 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -43,7 +43,8 @@ builder.Services
         builder.Configuration.GetValue<int?>("EmailConfig:SmtpPort") ?? 587,
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpUser"),
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpPass"));
-        
+
+builder.Services.AddMaintenanceLogDataServices();
 builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
 var app = builder.Build();
