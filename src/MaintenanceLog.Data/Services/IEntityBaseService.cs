@@ -4,11 +4,11 @@ namespace MaintenanceLog.Data.Services
 {
     public interface IEntityBaseService<T> where T : BaseEntity
     {
-        public Task<List<T>> GetPropertiesAsync();
-        public Task<T?> GetPropertyAsync(int id);
-        public Task<T> AddPropertyAsync(T entity);
-        public Task<T> UpdatePropertyAsync(T entity);
-        public Task DeletePropertyAsync(int id);
-        public Task DeleteAsync(T entity) => DeletePropertyAsync(entity.Id);
+        public Task<List<T>> GetAsync();
+        public Task<T?> FindAsync(int id);
+        public Task<T> AddAsync(T entity);
+        public Task<T> UpdateAsync(T entity);
+        public Task DeleteAsync(int id);
+        public Task DeleteAsync(T entity) => DeleteAsync(entity.Id);
     }
 }

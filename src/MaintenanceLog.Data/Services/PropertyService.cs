@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MaintenanceLog.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MaintenanceLog.Data.Services
@@ -8,7 +9,7 @@ namespace MaintenanceLog.Data.Services
         private readonly ILogger<PropertyService> _logger = logger;
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<Property> AddPropertyAsync(Property entity)
+        public async Task<Property> AddAsync(Property entity)
         {
             _logger.LogDebug($"Adding property: {entity}");
             var result = await _context.Properties!.AddAsync(entity);
@@ -16,7 +17,7 @@ namespace MaintenanceLog.Data.Services
             return result.Entity;
         }
 
-        public async Task DeletePropertyAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             _logger.LogInformation($"Deleting property id {id}");
             var result = await _context.Properties!.FindAsync(id);
@@ -31,17 +32,17 @@ namespace MaintenanceLog.Data.Services
             }
         }
 
-        public async Task<List<Property>> GetPropertiesAsync()
+        public async Task<List<Property>> GetAsync()
         {
             return await _context.Properties!.Where(p => !p.Deleted).ToListAsync();
         }
 
-        public async Task<Property?> GetPropertyAsync(int id)
+        public async Task<Property?> FindAsync(int id)
         {
             return await _context.Properties!.FindAsync([id]);
         }
 
-        public async Task<Property> UpdatePropertyAsync(Property entity)
+        public async Task<Property> UpdateAsync(Property entity)
         {
             _logger.LogDebug($"Updating property: {entity}");
             var result = _context.Properties!.Update(entity);

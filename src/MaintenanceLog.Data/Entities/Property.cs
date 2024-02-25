@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MaintenanceLog.Data.Entities;
 
-namespace MaintenanceLog.Data;
+namespace MaintenanceLog.Data.Entities;
 
 public class Property : BaseEntity
 {
