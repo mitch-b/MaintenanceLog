@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Product>Maintenance Log</Product>
+    <Authors>Mitchell Barry</Authors>
+    
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>
