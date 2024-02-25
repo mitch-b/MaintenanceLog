@@ -30,6 +30,11 @@ namespace MaintenanceLog.Data.Extensions
                 throw new InvalidOperationException("Invalid database provider.");
             }
 
+            services.AddScoped(http => new HttpClient
+            {
+                BaseAddress = new Uri(configuration!.GetSection("BaseUri")!.Value!)
+            });
+
             services.AddScoped<IPropertyService, PropertyService>();
 
             return services;

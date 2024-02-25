@@ -15,18 +15,20 @@ namespace MaintenanceLog.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProperties()
+        public async Task<ActionResult<IList<Property>>> GetProperties()
         {
             return Ok(await _propertyService.GetAsync());
         }
+
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetProperty(int id)
+        public async Task<ActionResult<Property>> GetProperty(int id)
         {
             return Ok(await _propertyService.FindAsync(id));
         }
+
         [HttpPost]
-        public async Task<IActionResult> AddProperty([FromBody] Property property)
+        public async Task<ActionResult<Property>> AddProperty([FromBody] Property property)
         {
             return Ok(await _propertyService.AddAsync(property));
         }
