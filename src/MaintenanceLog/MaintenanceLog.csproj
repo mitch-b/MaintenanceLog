@@ -25,4 +25,8 @@
     <ProjectReference Include="..\MaintenanceLog.Data\MaintenanceLog.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Properties\" />
+  </ItemGroup>
+
 </Project>

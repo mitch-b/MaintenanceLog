@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using MaintenanceLog.Client.Pages;
-using MaintenanceLog.Components;
+﻿using MaintenanceLog.Components;
 using MaintenanceLog.Components.Account;
 using MaintenanceLog.Data;
-using MaintenanceLog.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Extensions;
+using MaintenanceLog.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
