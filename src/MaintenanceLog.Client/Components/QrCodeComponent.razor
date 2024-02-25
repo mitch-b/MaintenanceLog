@@ -1,0 +1,37 @@
+﻿@using Blazor.QrCodeGen
+@using System.Drawing
+
+@* Must not prerender, server does not have required components to render the QR code component library *@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@if (QrCodeOptions is not null)
+{
+    <QrCode CanvasId="@CanvasId" Text="@Text" Options="@QrCodeOptions" />
+}
+else
+{
+    <span>Loading...</span>
+}
+
+
+@code {
+    [Parameter]
+    public string? CanvasId { get; set; }
+    [Parameter]
+    public string? Text { get; set; }
+    [Parameter]
+    public QrCodeOptions? QrCodeOptions { get; set; } = _defaultQrCodeOptions;
+
+    private static readonly QrCodeOptions _defaultQrCodeOptions = new QrCodeOptions { ColorDark = Color.Black };
+
+    protected override Task OnInitializedAsync()
+    {
+        if (QrCodeOptions is null)
+        {
+            QrCodeOptions = _defaultQrCodeOptions;
+        }
+
+        return Task.CompletedTask;
+    }
+
+}

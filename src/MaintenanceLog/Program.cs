@@ -28,6 +28,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("MaintenanceLogDb") ?? throw new InvalidOperationException("Connection string 'MaintenanceLogDb' not found.");
+
 // check if Settings.DbProvider is MSSQL
 var dbProvider = builder.Configuration.GetValue<string>("DbProvider");
 if (string.Equals(dbProvider, "MSSQL", StringComparison.OrdinalIgnoreCase))
@@ -60,7 +61,7 @@ builder.Services
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpUser"),
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpPass"));
         
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
 var app = builder.Build();
 
