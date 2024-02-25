@@ -7,6 +7,7 @@ using MaintenanceLog.Components.Account;
 using MaintenanceLog.Data;
 using MaintenanceLog.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using MaintenanceLog.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,24 +28,6 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("MaintenanceLogDb") ?? throw new InvalidOperationException("Connection string 'MaintenanceLogDb' not found.");
-
-// check if Settings.DbProvider is MSSQL
-var dbProvider = builder.Configuration.GetValue<string>("DbProvider");
-if (string.Equals(dbProvider, "MSSQL", StringComparison.OrdinalIgnoreCase))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
-}
-else if (string.Equals(dbProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(connectionString));
-}
-else
-{
-    throw new InvalidOperationException("Invalid database provider.");
-}
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

@@ -1,12 +1,11 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using MaintenanceLog.Data.Entities;
 
 namespace MaintenanceLog.Data;
 
-public class Area
+public class Area : BaseEntity
 {
-    public int Id { get; set; }
-
     [Required]
     [StringLength(500, ErrorMessage = "Area name cannot exceed 500 characters.")]
-    public string? Name { get; set; }
+    public required string Name { get; set; }
 }

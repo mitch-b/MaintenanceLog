@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using MaintenanceLog.Data.Entities;
 
 namespace MaintenanceLog.Data;
 
-public class Asset
+public class Asset : BaseEntity
 {
-    public int Id { get; set; }
 }

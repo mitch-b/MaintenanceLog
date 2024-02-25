@@ -19,11 +19,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".src", ".src", "{9D0192E5-E
 		..\.editorconfig = ..\.editorconfig
 		..\.gitignore = ..\.gitignore
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 		..\docker-compose.yml = ..\docker-compose.yml
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaintenanceLog.Data", "MaintenanceLog.Data\MaintenanceLog.Data.csproj", "{41487024-AC61-466F-A4D5-664DF9398B84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaintenanceLog.Data", "MaintenanceLog.Data\MaintenanceLog.Data.csproj", "{41487024-AC61-466F-A4D5-664DF9398B84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

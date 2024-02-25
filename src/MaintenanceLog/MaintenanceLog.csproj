@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MaintenanceLog.Client\MaintenanceLog.Client.csproj" />
+    <ProjectReference Include="..\MaintenanceLog.Data\MaintenanceLog.Data.csproj" />
   </ItemGroup>
 
 </Project>
