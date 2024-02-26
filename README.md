@@ -137,8 +137,6 @@ For example, `bi-house-gear`, I appended `-nav-menu` to follow convention, and c
 
 ```bash
 cd src/MaintenanceLog
-# dotnet tool install --global dotnet-ef
-dotnet ef database update
 
 dotnet user-secrets set EmailConfig:SmtpUser myuser
 dotnet user-secrets set EmailConfig:SmtpPass mypass
