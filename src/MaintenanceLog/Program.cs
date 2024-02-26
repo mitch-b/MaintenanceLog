@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using MaintenanceLog.Client.Pages;
-using MaintenanceLog.Components;
+﻿using MaintenanceLog.Components;
 using MaintenanceLog.Components.Account;
 using MaintenanceLog.Data;
+using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Extensions;
 using MaintenanceLog.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddControllers();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -27,9 +29,6 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("MaintenanceLogDb") ?? throw new InvalidOperationException("Connection string 'MaintenanceLogDb' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -44,15 +43,26 @@ builder.Services
         builder.Configuration.GetValue<int?>("EmailConfig:SmtpPort") ?? 587,
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpUser"),
         builder.Configuration.GetValue<string?>("EmailConfig:SmtpPass"));
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+builder.Services.AddMaintenanceLogDataServices();
+builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
+
+    // This section sets up and seeds the database. Seeding is NOT normally
+    // handled this way in production. The following approach is used in this
+    // sample app to make the sample simpler. The app can be cloned. The
+    // connection string is configured. The app can be run.
+    await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+    var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
+    await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
 }
 else
 {
@@ -61,6 +71,8 @@ else
     app.UseHsts();
     app.UseHttpsRedirection();
 }
+
+app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

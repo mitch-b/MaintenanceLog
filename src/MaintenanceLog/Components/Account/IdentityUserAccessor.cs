@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using MaintenanceLog.Data;
+using MaintenanceLog.Data.Entities;
 
 namespace MaintenanceLog.Components.Account;
 

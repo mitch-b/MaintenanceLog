@@ -1,6 +1,6 @@
-**/app.db
-**/app.db-shm
-**/app.db-wal
+**/maintenancelogdb.db
+**/maintenancelogdb.db-shm
+**/maintenancelogdb.db-wal
 
 # directories
 **/bin/

@@ -10,6 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["MaintenanceLog/MaintenanceLog.csproj", "MaintenanceLog/"]
+COPY ["MaintenanceLog.Data/MaintenanceLog.Data.csproj", "MaintenanceLog.Data/"]
 COPY ["MaintenanceLog.Client/MaintenanceLog.Client.csproj", "MaintenanceLog.Client/"]
 RUN dotnet restore "./MaintenanceLog/MaintenanceLog.csproj"
 

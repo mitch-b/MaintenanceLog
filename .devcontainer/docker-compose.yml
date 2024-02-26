@@ -9,18 +9,16 @@ services:
       - ../..:/workspaces:cached
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=Server=db;Database=MaintenanceLog;User Id=sa;Password=${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: service:db
-
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: maintenancelog-sql
+    restart: unless-stopped
     user: root
     environment:
       MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}

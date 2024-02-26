@@ -1,0 +1,69 @@
+@page "/properties"
+
+@using Microsoft.AspNetCore.Authorization
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IPropertyService PropertyService
+
+@attribute [Authorize]
+
+<PageTitle>Property List</PageTitle>
+
+<h3>Properties</h3>
+
+@if (properties != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+@*                 <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>Country</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Website</th>
+                <th>Notes</th> *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var property in properties)
+            {
+                <tr>
+                    <td>@property.Name</td>
+                    <td>@property.Description</td>
+@*                     <td>@property.Address</td>
+                    <td>@property.City</td>
+                    <td>@property.State</td>
+                    <td>@property.Zip</td>
+                    <td>@property.Country</td>
+                    <td>@property.Phone</td>
+                    <td>@property.Email</td>
+                    <td>@property.Website</td>
+                    <td>@property.Notes</td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <NavLink class="btn btn-primary" href="/properties/add">
+        Add Property
+    </NavLink>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    private List<Property> properties = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        properties = await PropertyService.GetAsync();
+    }
+}

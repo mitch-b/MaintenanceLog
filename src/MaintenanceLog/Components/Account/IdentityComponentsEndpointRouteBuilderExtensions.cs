@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using MaintenanceLog.Components.Account.Pages;
 using MaintenanceLog.Components.Account.Pages.Manage;
-using MaintenanceLog.Data;
+using MaintenanceLog.Data.Entities;
 
 namespace Microsoft.AspNetCore.Routing;
 

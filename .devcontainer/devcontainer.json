@@ -8,10 +8,7 @@
       "configureZshAsDefaultShell": true,
       "installOhMyZsh": true,
       "installOhMyZshConfig": true,
-      "upgradePackages": true,
-      "username": "vscode",
-      "userUid": "1001",
-      "userGid": "1001"
+      "upgradePackages": true
     },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
@@ -47,5 +44,6 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "remoteUser": "root"
 }
