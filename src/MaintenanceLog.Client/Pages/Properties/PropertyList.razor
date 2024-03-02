@@ -28,6 +28,7 @@
                 <th>Email</th>
                 <th>Website</th>
                 <th>Notes</th> *@
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -45,6 +46,13 @@
                     <td>@property.Email</td>
                     <td>@property.Website</td>
                     <td>@property.Notes</td> *@
+                    <td>
+                        <!-- edit button that includes id -->
+                        <NavLink class="btn btn-primary" href=@($"/properties/edit/{property.Id}")>
+                            Edit
+                        </NavLink>
+
+                    </td>
                 </tr>
             }
         </tbody>

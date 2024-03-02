@@ -32,5 +32,11 @@ namespace MaintenanceLog.Controllers
         {
             return Ok(await _propertyService.AddAsync(property));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<Property>> UpdateProperty([FromBody] Property property)
+        {
+            return Ok(await _propertyService.UpdateAsync(property));
+        }
     }
 }

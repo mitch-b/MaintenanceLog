@@ -36,7 +36,7 @@ namespace MaintenanceLog.Data.Services.Client
         public async Task<Property> UpdateAsync(Property entity)
         {
             var result = await _httpClient
-                .PutAsJsonAsync("api/properties", entity);
+                .PutAsJsonAsync($"api/properties", entity);
             var response = await result.Content.ReadFromJsonAsync<Property>();
             return response is null 
                 ? throw new Exception("API did not return the updated property") 
