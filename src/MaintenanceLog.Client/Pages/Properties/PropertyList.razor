@@ -4,6 +4,7 @@
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services
 
+@inject IJSRuntime JsRuntime
 @inject IPropertyService PropertyService
 
 @attribute [Authorize]
@@ -51,6 +52,10 @@
                         <NavLink class="btn btn-primary" href=@($"/properties/edit/{property.Id}")>
                             Edit
                         </NavLink>
+                        <!-- delete button that includes id -->
+                        <button class="btn btn-danger" @onclick="() => DeleteProperty(property.Id)">
+                            Delete
+                        </button>
 
                     </td>
                 </tr>
@@ -73,5 +78,18 @@ else
     protected override async Task OnInitializedAsync()
     {
         properties = await PropertyService.GetAsync();
+    }
+
+    private async Task DeleteProperty(int id)
+    {
+        // ask are you sure you want to delete in a popup
+        // if yes, delete
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            // Delete!
+            await PropertyService.DeleteAsync(id);
+            properties = await PropertyService.GetAsync();
+        }
     }
 }

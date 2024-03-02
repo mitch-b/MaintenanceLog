@@ -38,5 +38,13 @@ namespace MaintenanceLog.Controllers
         {
             return Ok(await _propertyService.UpdateAsync(property));
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult<Property>> DeleteProperty(int id)
+        {
+            await _propertyService.DeleteAsync(id);
+            return Ok();
+        }
     }
 }
