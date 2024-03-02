@@ -1,0 +1,38 @@
+﻿@page "/properties/{PropertyId:int}"
+
+@using MaintenanceLog.Client.Components.Admin.Areas
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IPropertyService PropertyService
+
+<PageTitle>Manage @propertyName</PageTitle>
+
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+
+<h2>Manage @propertyName</h2>
+<hr />
+
+<h3>Areas</h3>
+<AreaGrid PropertyId="@PropertyId" />
+
+@code
+{
+
+    [Parameter] public int PropertyId { get; set; }
+    private Property? property;
+
+    private List<(string, string?)> Breadcrumbs => 
+    [
+        ("Properties", "/properties"),
+    (propertyName, null)
+    ];
+
+    private string propertyName => property?.Name ?? "Property";
+
+    protected override async Task OnInitializedAsync()
+    {
+        property = await PropertyService.FindAsync(PropertyId);
+    }
+
+}

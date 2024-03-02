@@ -1,0 +1,26 @@
+﻿@if (Breadcrumbs is not null)
+{
+    for (int i = 0; i < Breadcrumbs.Count; i++)
+    {
+        var breadcrumb = Breadcrumbs[i];
+        
+        if (!string.IsNullOrWhiteSpace(breadcrumb.Item2))
+        {
+            <a href="@breadcrumb.Item2">@breadcrumb.Item1</a>
+        }
+        else
+        {
+            @breadcrumb.Item1
+        }
+        @if (i < Breadcrumbs.Count - 1)
+        {
+            <text> &gt; </text>
+        }
+    }
+}
+
+@code
+{
+    [Parameter]
+    public List<(string, string?)>? Breadcrumbs { get; set; }
+}
