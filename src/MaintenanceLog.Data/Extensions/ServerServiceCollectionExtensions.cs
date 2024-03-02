@@ -37,6 +37,7 @@ namespace MaintenanceLog.Data.Extensions
 
             services.AddScoped<IPropertyService, PropertyService>();
             services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<IAssetService, AssetService>();
 
             return services;
         }

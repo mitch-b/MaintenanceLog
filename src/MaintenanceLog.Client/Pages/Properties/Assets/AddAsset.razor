@@ -1,0 +1,83 @@
+﻿@page "/properties/{PropertyId:int}/assets/add"
+
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IPropertyService PropertyService
+@inject IAssetService AssetService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@propertyName | Add Asset</PageTitle>
+
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
+
+<h3>Add Asset to @propertyName</h3>
+
+<EditForm Model="@asset" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="@asset.Name" />
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputText id="description" class="form-control" @bind-Value="@asset.Description" />
+    </div>
+    <div class="form-group">
+        <label for="areaId">Area</label>
+        <InputSelect id="areaId" class="form-control" @bind-Value="@asset.AreaId">
+            <option value="">Select Area</option>
+            @foreach (var area in property?.Areas ?? new List<Area>())
+            {
+                <option value="@area.Id">@area.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+
+    <br />
+
+    <!-- button to save -->
+    <button type="submit" class="btn btn-primary">Save</button>
+
+</EditForm>
+
+
+@code
+{
+    [Parameter]
+    public int PropertyId { get; set; }
+    private Property? property;
+    private Asset asset = new Asset()
+        {
+            Name = string.Empty
+        };
+
+    private string propertyName => property?.Name ?? "Property";
+
+    private List<(string, string?)> Breadcrumbs =>
+    [
+        ("Properties", "/properties"),
+        (propertyName, $"/properties/{PropertyId}"),
+        ("Add Asset", null)
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        property = await PropertyService.FindAsync(PropertyId);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var createdAsset = await AssetService.AddAsync(asset);
+        if (createdAsset != null)
+        {
+            NavigationManager.NavigateTo($"/properties/{PropertyId}");
+        }
+    }
+
+}

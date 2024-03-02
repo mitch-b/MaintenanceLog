@@ -34,12 +34,17 @@ namespace MaintenanceLog.Data.Services
 
         public async Task<List<Property>> GetAsync()
         {
-            return await _context.Properties!.Where(p => !p.Deleted).ToListAsync();
+            return await _context.Properties!
+                .Include(p => p.Areas)
+                .Where(p => !p.Deleted)
+                .ToListAsync();
         }
 
         public async Task<Property?> FindAsync(int id)
         {
-            return await _context.Properties!.FindAsync([id]);
+            return await _context.Properties!
+                .Include(p => p.Areas)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Property> UpdateAsync(Property entity)

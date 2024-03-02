@@ -12,6 +12,7 @@ namespace MaintenanceLog.Data.Extensions
             services.AddScoped(http => new HttpClient { BaseAddress = new Uri(hostEnvironment.BaseAddress) });
             services.AddScoped<IPropertyService, HttpPropertyService>();
             services.AddScoped<IAreaService, HttpAreaService>();
+            services.AddScoped<IAssetService, HttpAssetService>();
             return services;
         }
     }

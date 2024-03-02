@@ -1,0 +1,74 @@
+﻿@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IJSRuntime JsRuntime
+@inject IPropertyService PropertyService
+@inject IAreaService AreaService
+@inject IAssetService AssetService
+
+@if (property is not null && assets is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Area</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var asset in assets)
+            {
+                <tr>
+                    <td>@asset.Name</td>
+                    <td>@asset.Description</td>
+                    <td>@asset.Area?.Name</td>
+                    <td>
+                        <!-- edit button that includes id -->
+                        <NavLink class="btn btn-primary" href=@($"/properties/{PropertyId}/assets/{asset.Id}")>
+                            Edit
+                        </NavLink>
+                        <!-- delete button that includes id -->
+                        <button class="btn btn-danger" @onclick="() => DeleteAsset(asset.Id)">
+                            Delete
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <NavLink class="btn btn-primary" href=@($"/properties/{PropertyId}/assets/add")>
+        Add Asset
+    </NavLink>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    [Parameter]
+    public int PropertyId { get; set; }
+
+    private List<Asset>? assets;
+    private Property? property;
+
+    protected override async Task OnInitializedAsync()
+    {
+        property = await PropertyService.FindAsync(PropertyId);
+        assets = await AssetService.GetByPropertyAsync(PropertyId);
+    }
+
+    private async Task DeleteAsset(int id)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await AssetService.DeleteAsync(id);
+            assets = await AssetService.GetByPropertyAsync(PropertyId);
+        }
+    }
+}

@@ -26,4 +26,5 @@ public class Asset : BaseEntity
     public bool IsArchived { get; set; }
 
     public int? AreaId { get; set; }
+    public Area? Area { get; set; }
 }

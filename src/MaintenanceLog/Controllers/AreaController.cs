@@ -9,9 +9,13 @@ namespace MaintenanceLog.Controllers
     public class AreaController: ControllerBase
     {
         private readonly IAreaService _areaService;
-        public AreaController(IAreaService areaService)
+        private readonly IAssetService _assetService;
+        public AreaController(
+            IAreaService areaService,
+            IAssetService assetService)
         {
             _areaService = areaService;
+            _assetService = assetService;
         }
 
         [HttpGet]
@@ -45,6 +49,13 @@ namespace MaintenanceLog.Controllers
         {
             await _areaService.DeleteAsync(id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{id}/assets")]
+        public async Task<ActionResult<IList<Asset>>> GetAssets(int id)
+        {
+            return Ok(await _assetService.GetByAreaAsync(id));
         }
     }
 }

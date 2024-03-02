@@ -10,10 +10,15 @@ namespace MaintenanceLog.Controllers
     {
         private readonly IPropertyService _propertyService;
         private readonly IAreaService _areaService;
-        public PropertyController(IPropertyService propertyService, IAreaService areaService)
+        private readonly IAssetService _assetService;
+        public PropertyController(
+            IPropertyService propertyService, 
+            IAreaService areaService,
+            IAssetService assetService)
         {
             _propertyService = propertyService;
             _areaService = areaService;
+            _assetService = assetService;
         }
 
         [HttpGet]
@@ -54,6 +59,13 @@ namespace MaintenanceLog.Controllers
         public async Task<ActionResult<IList<Area>>> GetAreas(int id)
         {
             return Ok(await _areaService.GetByPropertyAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{id}/assets")]
+        public async Task<ActionResult<IList<Asset>>> GetAssets(int id)
+        {
+            return Ok(await _assetService.GetByPropertyAsync(id));
         }
     }
 }
