@@ -1,20 +1,27 @@
 ﻿@page "/properties/{PropertyId:int}"
 
+@using Microsoft.AspNetCore.Authorization
 @using MaintenanceLog.Client.Components.Admin.Areas
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services
 
 @inject IPropertyService PropertyService
 
+@attribute [Authorize]
+
 <PageTitle>Manage @propertyName</PageTitle>
 
 <MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
 
 <h2>Manage @propertyName</h2>
 <hr />
 
 <h3>Areas</h3>
 <AreaGrid PropertyId="@PropertyId" />
+
+<h3>Assets</h3>
+@* <AssetGrid PropertyId="@PropertyId" /> *@
 
 @code
 {

@@ -8,6 +8,9 @@
 
 <PageTitle>Add Property</PageTitle>
 
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
+
 <h3>Add Property</h3>
 
 <EditForm Model="@property" OnValidSubmit="@HandleValidSubmit">
@@ -35,6 +38,12 @@
         {
             Name = string.Empty
         };
+
+    private List<(string, string?)> Breadcrumbs =>
+    [
+        ("Properties", "/properties"),
+        ("Add Property", null)
+    ];
 
     protected override async Task OnInitializedAsync()
     {

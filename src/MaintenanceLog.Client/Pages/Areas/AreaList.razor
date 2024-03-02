@@ -1,4 +1,4 @@
-@page "/properties/{PropertyId:int}/areas"
+@page "/areas"
 
 @using MaintenanceLog.Client.Components.Admin.Areas
 @using Microsoft.AspNetCore.Authorization
@@ -6,26 +6,20 @@
 @using MaintenanceLog.Data.Services
 
 @inject IJSRuntime JsRuntime
-@inject IPropertyService PropertyService
 @inject IAreaService AreaService
 
 @attribute [Authorize]
 
-<PageTitle>@PropertyName | Areas</PageTitle>
+<PageTitle>Areas</PageTitle>
 
-<h3>@PropertyName Areas</h3>
+<h3>Manage all Areas</h3>
 
-<AreaGrid PropertyId="@PropertyId" />
+<AreaGrid />
 
-@code {
-    [Parameter]
-    public int PropertyId { get; set; }
-    private Property? property;
-
-    public string PropertyName => property?.Name ?? "Property";
-
+@code
+{
     protected override async Task OnInitializedAsync()
     {
-        property = await PropertyService.FindAsync(PropertyId);
+        await base.OnInitializedAsync();
     }
 }

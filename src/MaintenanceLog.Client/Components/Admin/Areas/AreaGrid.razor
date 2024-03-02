@@ -23,7 +23,7 @@
                     @*                     <td>@area.Description</td> *@
                     <td>
                         <!-- edit button that includes id -->
-                        <NavLink class="btn btn-primary" href=@($"/properties/{property.Id}/areas/{area.Id}")>
+                        <NavLink class="btn btn-primary" href=@(AreaEditUrl(area))>
                             Edit
                         </NavLink>
                         <!-- delete button that includes id -->
@@ -37,7 +37,7 @@
         </tbody>
     </table>
 
-    <NavLink class="btn btn-primary" href=@($"/properties/{property.Id}/areas/add")>
+    <NavLink class="btn btn-primary" href=@(AreaAddUrl())>
         Add Area
     </NavLink>
 }
@@ -59,6 +59,24 @@ else
             property = await PropertyService.FindAsync(PropertyId.Value);
         }
         await LoadAreas();
+    }
+
+    private string AreaAddUrl()
+    {
+        if (PropertyId is null)
+        {
+            return "/areas/add";
+        }
+        return $"/properties/{PropertyId}/areas/add";
+    }
+
+    private string AreaEditUrl(Area area)
+    {
+        if (PropertyId is null)
+        {
+            return $"/areas/edit/{area.Id}";
+        }
+        return $"/properties/{PropertyId}/areas/{area.Id}";
     }
 
     private async Task LoadAreas()

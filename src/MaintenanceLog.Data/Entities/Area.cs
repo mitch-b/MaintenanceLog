@@ -9,4 +9,6 @@ public class Area : BaseEntity
     public required string Name { get; set; }
 
     public int PropertyId { get; set; }
+
+    public ICollection<Asset>? Assets { get; set; }
 }

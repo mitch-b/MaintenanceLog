@@ -9,6 +9,9 @@
 
 <PageTitle>@propertyName | Add Area</PageTitle>
 
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
+
 <h3>Add Area to @propertyName</h3>
 
 <EditForm Model="@area" OnValidSubmit="@HandleValidSubmit">
@@ -35,6 +38,13 @@
     private Property? property;
 
     private string propertyName => property?.Name ?? "Property";
+
+    private List<(string, string?)> Breadcrumbs =>
+    [
+        ("Properties", "/properties"),
+        (propertyName, $"/properties/{PropertyId}"),
+        ("Add Area", null)
+    ];
 
     private Area area = new Area()
         {
