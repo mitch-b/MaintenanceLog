@@ -10,4 +10,6 @@ public class Property : BaseEntity
 
     [StringLength(2000, ErrorMessage = "Property description cannot exceed 2000 characters.")]
     public string? Description { get; set; }
+
+    public ICollection<Area> Areas { get; set; } = new List<Area>();
 }

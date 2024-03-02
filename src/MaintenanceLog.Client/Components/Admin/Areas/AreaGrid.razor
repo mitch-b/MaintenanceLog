@@ -1,0 +1,99 @@
+﻿@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IJSRuntime JsRuntime
+@inject IPropertyService PropertyService
+@inject IAreaService AreaService
+
+@if (property is not null && areas is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                @*              <th>Description</th> *@
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var area in areas)
+            {
+                <tr>
+                    <td>@area.Name</td>
+                    @*                     <td>@area.Description</td> *@
+                    <td>
+                        <!-- edit button that includes id -->
+                        <NavLink class="btn btn-primary" href=@(AreaEditUrl(area))>
+                            Edit
+                        </NavLink>
+                        <!-- delete button that includes id -->
+                        <button class="btn btn-danger" @onclick="() => DeleteArea(area.Id)">
+                            Delete
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <NavLink class="btn btn-primary" href=@(AreaAddUrl())>
+        Add Area
+    </NavLink>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    [Parameter]
+    public int? PropertyId { get; set; }
+    private List<Area>? areas;
+    private Property? property;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PropertyId is not null)
+        {
+            property = await PropertyService.FindAsync(PropertyId.Value);
+        }
+        await LoadAreas();
+    }
+
+    private string AreaAddUrl()
+    {
+        if (PropertyId is null)
+        {
+            return "/areas/add";
+        }
+        return $"/properties/{PropertyId}/areas/add";
+    }
+
+    private string AreaEditUrl(Area area)
+    {
+        if (PropertyId is null)
+        {
+            return $"/areas/edit/{area.Id}";
+        }
+        return $"/properties/{PropertyId}/areas/{area.Id}";
+    }
+
+    private async Task LoadAreas()
+    {
+        areas = (PropertyId is null) 
+            ? await AreaService.GetAsync() 
+            : await AreaService.GetByPropertyAsync(PropertyId.Value);
+    }
+
+    private async Task DeleteArea(int id)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            // Delete!
+            await AreaService.DeleteAsync(id);
+            await LoadAreas();
+        }
+    }
+}

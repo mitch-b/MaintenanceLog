@@ -1,0 +1,25 @@
+@page "/areas"
+
+@using MaintenanceLog.Client.Components.Admin.Areas
+@using Microsoft.AspNetCore.Authorization
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IJSRuntime JsRuntime
+@inject IAreaService AreaService
+
+@attribute [Authorize]
+
+<PageTitle>Areas</PageTitle>
+
+<h3>Manage all Areas</h3>
+
+<AreaGrid />
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+}

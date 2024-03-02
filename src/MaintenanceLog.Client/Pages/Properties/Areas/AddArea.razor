@@ -1,0 +1,70 @@
+﻿@page "/properties/{PropertyId:int}/areas/add"
+
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services
+
+@inject IPropertyService PropertyService
+@inject IAreaService AreaService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@propertyName | Add Area</PageTitle>
+
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
+
+<h3>Add Area to @propertyName</h3>
+
+<EditForm Model="@area" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="@area.Name" />
+    </div>
+
+    <br />
+
+    <!-- button to save -->
+    <button type="submit" class="btn btn-primary">Save</button>
+
+</EditForm>
+
+
+@code
+{
+    [Parameter]
+    public int PropertyId { get; set; }
+    private Property? property;
+
+    private string propertyName => property?.Name ?? "Property";
+
+    private List<(string, string?)> Breadcrumbs =>
+    [
+        ("Properties", "/properties"),
+        (propertyName, $"/properties/{PropertyId}"),
+        ("Add Area", null)
+    ];
+
+    private Area area = new Area()
+        {
+            Name = string.Empty
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        property = await PropertyService.FindAsync(PropertyId);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        area.PropertyId = PropertyId;
+        var createdArea = await AreaService.AddAsync(area);
+        if (createdArea != null)
+        {
+            NavigationManager.NavigateTo($"/properties/{PropertyId}");
+        }
+    }
+
+}
