@@ -1,17 +1,14 @@
-﻿using System.Net.Http.Json;
-using MaintenanceLog.Data.Entities;
+﻿using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Contracts;
 
 namespace MaintenanceLog.Data.Services.Client
 {
-    public class HttpAreaService(HttpClient httpClient) : IAreaService
+    public class HttpAreaService(JsonHttpClient httpClient) : IAreaService
     {
-        private readonly HttpClient _httpClient = httpClient;
+        private readonly JsonHttpClient _httpClient = httpClient;
         public async Task<Area> AddAsync(Area entity)
         {
-            var result = await _httpClient
-                .PostAsJsonAsync<Area>("api/areas", entity);
-            var response = await result.Content.ReadFromJsonAsync<Area>();
+            var response = await _httpClient.PostAsJsonAsync<Area, Area>("api/areas", entity);
             return response is null 
                 ? throw new Exception("API did not return the created area") 
                 : response;
@@ -42,9 +39,8 @@ namespace MaintenanceLog.Data.Services.Client
 
         public async Task<Area> UpdateAsync(Area entity)
         {
-            var result = await _httpClient
-                .PutAsJsonAsync($"api/areas", entity);
-            var response = await result.Content.ReadFromJsonAsync<Area>();
+            var response = await _httpClient
+                .PutAsJsonAsync<Area, Area>($"api/areas", entity);
             return response is null 
                 ? throw new Exception("API did not return the updated area") 
                 : response;

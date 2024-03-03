@@ -1,11 +1,10 @@
 ﻿using MaintenanceLog.Data.Entities;
-using MaintenanceLog.Data.Services.Contracts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaintenanceLog.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options), IApplicationDbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
     // Magic string.
     public static readonly string MaintenanceLogDb = nameof(MaintenanceLogDb).ToLower();

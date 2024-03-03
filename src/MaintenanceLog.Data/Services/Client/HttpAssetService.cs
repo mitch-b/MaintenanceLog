@@ -1,17 +1,15 @@
-﻿using System.Net.Http.Json;
-using MaintenanceLog.Data.Entities;
+﻿using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Contracts;
 
 namespace MaintenanceLog.Data.Services.Client
 {
-    public class HttpAssetService(HttpClient httpClient) : IAssetService
+    public class HttpAssetService(JsonHttpClient httpClient) : IAssetService
     {
-        private readonly HttpClient _httpClient = httpClient;
+        private readonly JsonHttpClient _httpClient = httpClient;
         public async Task<Asset> AddAsync(Asset entity)
         {
-            var result = await _httpClient
-                .PostAsJsonAsync<Asset>("api/assets", entity);
-            var response = await result.Content.ReadFromJsonAsync<Asset>();
+            var response = await _httpClient
+                .PostAsJsonAsync<Asset, Asset>("api/assets", entity);
             return response is null 
                 ? throw new Exception("API did not return the created asset") 
                 : response;
@@ -48,9 +46,8 @@ namespace MaintenanceLog.Data.Services.Client
 
         public async Task<Asset> UpdateAsync(Asset entity)
         {
-            var result = await _httpClient
-                .PutAsJsonAsync($"api/assets", entity);
-            var response = await result.Content.ReadFromJsonAsync<Asset>();
+            var response = await _httpClient
+                .PutAsJsonAsync<Asset, Asset>($"api/assets", entity);
             return response is null 
                 ? throw new Exception("API did not return the updated asset") 
                 : response;
