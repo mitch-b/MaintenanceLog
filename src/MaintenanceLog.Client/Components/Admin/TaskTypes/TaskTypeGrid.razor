@@ -1,0 +1,66 @@
+﻿@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services.Contracts
+
+@inject IJSRuntime JsRuntime
+@inject ITaskTypeService TaskTypeService
+
+@if (taskTypes is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var taskType in taskTypes)
+            {
+                <tr>
+                    <td>@taskType.Name</td>
+                    <td>
+                        <!-- edit button that includes id -->
+                        <NavLink class="btn btn-primary" href=@($"/settings/task-types/{taskType.Id}")>
+                            Edit
+                        </NavLink>
+                        <!-- delete button that includes id -->
+                        <button class="btn btn-danger" @onclick="() => DeleteTaskType(taskType.Id)">
+                            Delete
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <NavLink class="btn btn-primary" href=@($"/settings/task-types/add")>
+        Add Task Type
+    </NavLink>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+
+    private List<TaskType>? taskTypes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTaskTypes();
+    }
+
+    private async Task LoadTaskTypes() => taskTypes = await TaskTypeService.GetAsync();
+
+    private async Task DeleteTaskType(int id)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await TaskTypeService.DeleteAsync(id);
+            await LoadTaskTypes();
+        }
+    }
+}

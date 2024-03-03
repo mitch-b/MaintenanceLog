@@ -13,6 +13,7 @@ namespace MaintenanceLog.Data.Extensions
             services.AddScoped<IPropertyService, HttpPropertyService>();
             services.AddScoped<IAreaService, HttpAreaService>();
             services.AddScoped<IAssetService, HttpAssetService>();
+            services.AddScoped<ITaskTypeService, HttpTaskTypeService>();
             return services;
         }
     }

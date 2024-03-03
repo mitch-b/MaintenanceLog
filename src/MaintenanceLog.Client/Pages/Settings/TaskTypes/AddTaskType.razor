@@ -1,0 +1,61 @@
+﻿@page "/settings/task-types/add"
+
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services.Contracts
+@using Microsoft.AspNetCore.Authorization
+
+@inject ITaskTypeService TaskTypeService
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
+
+<PageTitle>Add Task Type</PageTitle>
+
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
+
+<EditForm Model="@taskType" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <InputText id="Name" class="form-control" @bind-Value="taskType.Name" />
+    </div>
+
+    <!-- TODO: icon? -->
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code
+{
+    private TaskType taskType = new TaskType()
+        {
+            Name = ""
+        };
+
+    private string taskTypeName => taskType?.Name ?? "Task Type";
+
+    private List<(string, string?)> Breadcrumbs =>
+    [
+        ("Settings", "/settings"),
+        ("Add Task Type", null)
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var createdTaskType = await TaskTypeService.AddAsync(taskType);
+        if (createdTaskType != null)
+        {
+            NavigationManager.NavigateTo($"/settings");
+        }
+    }
+}
