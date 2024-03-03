@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Services.Contracts;
 
 namespace MaintenanceLog.Data.Services.Client
 {

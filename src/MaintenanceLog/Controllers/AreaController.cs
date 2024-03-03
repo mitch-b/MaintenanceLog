@@ -1,5 +1,5 @@
 ﻿using MaintenanceLog.Data.Entities;
-using MaintenanceLog.Data.Services;
+using MaintenanceLog.Data.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaintenanceLog.Controllers

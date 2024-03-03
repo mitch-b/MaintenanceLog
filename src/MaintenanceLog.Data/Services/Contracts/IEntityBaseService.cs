@@ -1,6 +1,6 @@
 ﻿using MaintenanceLog.Data.Entities;
 
-namespace MaintenanceLog.Data.Services
+namespace MaintenanceLog.Data.Services.Contracts
 {
     public interface IEntityBaseService<T> where T : BaseEntity
     {

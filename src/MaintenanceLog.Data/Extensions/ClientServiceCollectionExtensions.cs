@@ -1,5 +1,5 @@
-﻿using MaintenanceLog.Data.Services;
-using MaintenanceLog.Data.Services.Client;
+﻿using MaintenanceLog.Data.Services.Client;
+using MaintenanceLog.Data.Services.Contracts;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 

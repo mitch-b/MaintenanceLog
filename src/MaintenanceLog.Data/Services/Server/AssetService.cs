@@ -1,8 +1,9 @@
 ﻿using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace MaintenanceLog.Data.Services
+namespace MaintenanceLog.Data.Services.Server
 {
     public class AssetService(ILogger<AssetService> logger, ApplicationDbContext context) : IAssetService
     {
