@@ -11,7 +11,9 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
-builder.Services.AddMaintenanceLogClientDataServices(builder.HostEnvironment);
+
+builder.Services.AddScoped(http => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddMaintenanceLogClientDataServices();
 
 builder.Services.AddTransient(sp => new ModuleCreator(sp.GetService<IJSRuntime>()));
 

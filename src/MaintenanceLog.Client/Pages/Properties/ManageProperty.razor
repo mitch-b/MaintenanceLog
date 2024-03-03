@@ -1,9 +1,10 @@
 ﻿@page "/properties/{PropertyId:int}"
 
-@using Microsoft.AspNetCore.Authorization
+@using MaintenanceLog.Client.Components.Admin.Assets
 @using MaintenanceLog.Client.Components.Admin.Areas
 @using MaintenanceLog.Data.Entities
-@using MaintenanceLog.Data.Services
+@using MaintenanceLog.Data.Services.Contracts
+@using Microsoft.AspNetCore.Authorization
 
 @inject IPropertyService PropertyService
 
@@ -16,12 +17,17 @@
 
 <h2>Manage @propertyName</h2>
 <hr />
+<br />
 
 <h3>Areas</h3>
 <AreaGrid PropertyId="@PropertyId" />
+<br />
+<br />
 
 <h3>Assets</h3>
-@* <AssetGrid PropertyId="@PropertyId" /> *@
+<AssetGrid PropertyId="@PropertyId" />
+<br />
+<br />
 
 @code
 {
@@ -32,7 +38,7 @@
     private List<(string, string?)> Breadcrumbs => 
     [
         ("Properties", "/properties"),
-    (propertyName, null)
+        (propertyName, null)
     ];
 
     private string propertyName => property?.Name ?? "Property";

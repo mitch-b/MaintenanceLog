@@ -1,16 +1,15 @@
-﻿using System.Net.Http.Json;
-using MaintenanceLog.Data.Entities;
+﻿using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Services.Contracts;
 
 namespace MaintenanceLog.Data.Services.Client
 {
-    public class HttpPropertyService(HttpClient httpClient) : IPropertyService
+    public class HttpPropertyService(JsonHttpClient httpClient) : IPropertyService
     {
-        private readonly HttpClient _httpClient = httpClient;
+        private readonly JsonHttpClient _httpClient = httpClient;
         public async Task<Property> AddAsync(Property entity)
         {
-            var result = await _httpClient
-                .PostAsJsonAsync<Property>("api/properties", entity);
-            var response = await result.Content.ReadFromJsonAsync<Property>();
+            var response = await _httpClient
+                .PostAsJsonAsync<Property, Property>("api/properties", entity);
             return response is null 
                 ? throw new Exception("API did not return the created property") 
                 : response;
@@ -35,9 +34,8 @@ namespace MaintenanceLog.Data.Services.Client
 
         public async Task<Property> UpdateAsync(Property entity)
         {
-            var result = await _httpClient
-                .PutAsJsonAsync($"api/properties", entity);
-            var response = await result.Content.ReadFromJsonAsync<Property>();
+            var response = await _httpClient
+                .PutAsJsonAsync<Property, Property>($"api/properties", entity);
             return response is null 
                 ? throw new Exception("API did not return the updated property") 
                 : response;

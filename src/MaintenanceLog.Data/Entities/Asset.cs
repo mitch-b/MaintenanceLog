@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace MaintenanceLog.Data.Entities;
 
 public class Asset : BaseEntity
 {
-    [Required]
     public required string Name { get; set; }
 
     public string? Description { get; set; }
@@ -26,4 +26,5 @@ public class Asset : BaseEntity
     public bool IsArchived { get; set; }
 
     public int? AreaId { get; set; }
+    public Area? Area { get; set; }
 }

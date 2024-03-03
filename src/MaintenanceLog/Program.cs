@@ -1,4 +1,5 @@
-﻿using MaintenanceLog.Components;
+﻿using System.Text.Json.Serialization;
+using MaintenanceLog.Components;
 using MaintenanceLog.Components.Account;
 using MaintenanceLog.Data;
 using MaintenanceLog.Data.Entities;
@@ -15,7 +16,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();

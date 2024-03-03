@@ -4,6 +4,7 @@ using MaintenanceLog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceLog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302215758_Accessors")]
+    partial class Accessors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +118,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Areas", (string)null);
+                    b.ToTable("Areas");
                 });
 
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Asset", b =>
@@ -172,7 +175,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.ToTable("Assets", (string)null);
+                    b.ToTable("Assets");
                 });
 
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Property", b =>
@@ -202,7 +205,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Properties", (string)null);
+                    b.ToTable("Properties");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -352,7 +355,7 @@ namespace MaintenanceLog.Data.Migrations
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Asset", b =>
                 {
                     b.HasOne("MaintenanceLog.Data.Entities.Area", "Area")
-                        .WithMany()
+                        .WithMany("Assets")
                         .HasForeignKey("AreaId");
 
                     b.Navigation("Area");
@@ -407,6 +410,11 @@ namespace MaintenanceLog.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MaintenanceLog.Data.Entities.Area", b =>
+                {
+                    b.Navigation("Assets");
                 });
 
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Property", b =>

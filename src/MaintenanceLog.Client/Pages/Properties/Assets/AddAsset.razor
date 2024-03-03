@@ -1,27 +1,42 @@
-﻿@page "/properties/{PropertyId:int}/areas/add"
+﻿@page "/properties/{PropertyId:int}/assets/add"
 
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
 
 @inject IPropertyService PropertyService
-@inject IAreaService AreaService
+@inject IAssetService AssetService
 @inject NavigationManager NavigationManager
 
-<PageTitle>@propertyName | Add Area</PageTitle>
+<PageTitle>@propertyName | Add Asset</PageTitle>
 
 <MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
 <br />
 
-<h3>Add Area to @propertyName</h3>
+<h3>Add Asset to @propertyName</h3>
 
-<EditForm Model="@area" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@asset" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="form-group">
         <label for="name">Name</label>
-        <InputText id="name" class="form-control" @bind-Value="@area.Name" />
+        <InputText id="name" class="form-control" @bind-Value="@asset.Name" />
     </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputText id="description" class="form-control" @bind-Value="@asset.Description" />
+    </div>
+    <div class="form-group">
+        <label for="areaId">Area</label>
+        <InputSelect id="areaId" class="form-control" @bind-Value="@asset.AreaId">
+            <option value=@(null as int?)>Select Area</option>
+            @foreach (var area in property?.Areas ?? new List<Area>())
+            {
+                <option value="@area.Id">@area.Name</option>
+            }
+        </InputSelect>
+    </div>
+
 
     <br />
 
@@ -36,6 +51,10 @@
     [Parameter]
     public int PropertyId { get; set; }
     private Property? property;
+    private Asset asset = new Asset()
+        {
+            Name = string.Empty
+        };
 
     private string propertyName => property?.Name ?? "Property";
 
@@ -43,13 +62,8 @@
     [
         ("Properties", "/properties"),
         (propertyName, $"/properties/{PropertyId}"),
-        ("Add Area", null)
+        ("Add Asset", null)
     ];
-
-    private Area area = new Area()
-        {
-            Name = string.Empty
-        };
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,9 +73,8 @@
 
     private async Task HandleValidSubmit()
     {
-        area.PropertyId = PropertyId;
-        var createdArea = await AreaService.AddAsync(area);
-        if (createdArea != null)
+        var createdAsset = await AssetService.AddAsync(asset);
+        if (createdAsset != null)
         {
             NavigationManager.NavigateTo($"/properties/{PropertyId}");
         }
