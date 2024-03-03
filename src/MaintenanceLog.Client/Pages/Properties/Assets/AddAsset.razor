@@ -29,7 +29,7 @@
     <div class="form-group">
         <label for="areaId">Area</label>
         <InputSelect id="areaId" class="form-control" @bind-Value="@asset.AreaId">
-            <option value="">Select Area</option>
+            <option value=@(null as int?)>Select Area</option>
             @foreach (var area in property?.Areas ?? new List<Area>())
             {
                 <option value="@area.Id">@area.Name</option>

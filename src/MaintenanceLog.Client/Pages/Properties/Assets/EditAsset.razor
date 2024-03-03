@@ -1,0 +1,100 @@
+﻿@page "/properties/{PropertyId:int}/assets/{AssetId:int}"
+
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services.Contracts
+
+@inject IPropertyService PropertyService
+@inject IAssetService AssetService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@propertyName | Edit @assetName</PageTitle>
+
+<MenuBreadcrumbs Breadcrumbs=@Breadcrumbs />
+<br />
+
+<h3>@propertyName | Edit @assetName</h3>
+
+@if (asset is not null)
+{
+    <EditForm Model="@asset" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <InputText id="name" class="form-control" @bind-Value="@asset.Name" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <InputText id="description" class="form-control" @bind-Value="@asset.Description" />
+        </div>
+        <div class="form-group">
+            <label for="areaId">Area</label>
+            <InputSelect id="areaId" class="form-control" @bind-Value="@asset.AreaId">
+                <option value=@(null as int?)>Select Area</option>
+                @foreach (var area in property?.Areas ?? new List<Area>())
+                {
+                    <option value="@area.Id">@area.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <!-- button to save -->
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </EditForm>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+
+@code {
+    [Parameter]
+    public int PropertyId { get; set; }
+    [Parameter]
+    public int AssetId { get; set; }
+
+    private Property? property;
+    private Asset? asset;
+
+    private List<(string, string?)> Breadcrumbs => [
+        ("Properties", "/properties"),
+    (propertyName, $"/properties/{PropertyId}"),
+    (assetName, null)
+    ];
+
+    private string propertyName => property?.Name ?? "Property";
+    private string assetName => asset?.Name ?? "Asset";
+
+    protected override async Task OnInitializedAsync()
+    {
+        property = await PropertyService.FindAsync(PropertyId);
+        asset = await AssetService.FindAsync(AssetId);
+
+        if (property is null)
+        {
+            NavigationManager.NavigateTo($"/properties");
+        }
+        if (asset is null)
+        {
+            NavigationManager.NavigateTo($"/properties/{PropertyId}");
+        }
+        await base.OnInitializedAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (asset is null)
+        {
+            return;
+        }
+        var updatedAsset = await AssetService.UpdateAsync(asset);
+        if (updatedAsset != null)
+        {
+            NavigationManager.NavigateTo($"/properties/{PropertyId}");
+        }
+    }
+
+}
