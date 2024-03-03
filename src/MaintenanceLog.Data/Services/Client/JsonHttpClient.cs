@@ -19,7 +19,7 @@ namespace MaintenanceLog.Data.Services.Client
             };
         }
 
-        public async Task<T> GetFromJsonAsync<T>(string requestUri)
+        public async Task<T?> GetFromJsonAsync<T>(string requestUri)
         {
             var response = await _httpClient.GetAsync(requestUri);
             response.EnsureSuccessStatusCode();
@@ -28,7 +28,7 @@ namespace MaintenanceLog.Data.Services.Client
             return await JsonSerializer.DeserializeAsync<T>(contentStream, _jsonSerializerOptions);
         }
 
-        public async Task<TResponse> PostAsJsonAsync<TRequest, TResponse>(string requestUri, TRequest content)
+        public async Task<TResponse?> PostAsJsonAsync<TRequest, TResponse>(string requestUri, TRequest content)
         {
             using var contentStream = new MemoryStream();
             await JsonSerializer.SerializeAsync(contentStream, content, _jsonSerializerOptions);
@@ -57,7 +57,7 @@ namespace MaintenanceLog.Data.Services.Client
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<TResponse> PutAsJsonAsync<TRequest, TResponse>(string requestUri, TRequest content)
+        public async Task<TResponse?  > PutAsJsonAsync<TRequest, TResponse>(string requestUri, TRequest content)
         {
             using var contentStream = new MemoryStream();
             await JsonSerializer.SerializeAsync(contentStream, content, _jsonSerializerOptions);
