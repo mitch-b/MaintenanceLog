@@ -5,27 +5,29 @@ using Microsoft.Extensions.Logging;
 
 namespace MaintenanceLog.Data.Services.Server
 {
-    public class AssetService(ILogger<AssetService> logger, ApplicationDbContext context) : IAssetService
+    public class AssetService(ILogger<AssetService> logger, IDbContextFactory<ApplicationDbContext> contextFactory) : IAssetService
     {
         private readonly ILogger<AssetService> _logger = logger;
-        private readonly ApplicationDbContext _context = context;
+        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
 
         public async Task<Asset> AddAsync(Asset entity)
         {
+            using var context = _contextFactory.CreateDbContext();
             _logger.LogDebug($"Adding asset: {entity}");
-            var result = await _context.Assets!.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            var result = await context.Assets!.AddAsync(entity);
+            await context.SaveChangesAsync();
             return result.Entity;
         }
 
         public async Task DeleteAsync(int id)
         {
+            using var context = _contextFactory.CreateDbContext();
             _logger.LogInformation($"Deleting asset id {id}");
-            var result = await _context.Assets!.FindAsync(id);
+            var result = await context.Assets!.FindAsync(id);
             if (result != null)
             {
-                _context.Assets.Remove(result);
-                await _context.SaveChangesAsync();
+                context.Assets.Remove(result);
+                await context.SaveChangesAsync();
             }
             else
             {
@@ -35,7 +37,8 @@ namespace MaintenanceLog.Data.Services.Server
 
         public async Task<List<Asset>> GetAsync()
         {
-            return await _context.Assets!
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Assets!
                 .Include(a => a.Area)
                 .ThenInclude(a => a.Property)
                 .Where(p => !p.Deleted)
@@ -44,7 +47,8 @@ namespace MaintenanceLog.Data.Services.Server
 
         public async Task<Asset?> FindAsync(int id)
         {
-            return await _context.Assets!
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Assets!
                 .Include(a => a.Area)
                 .ThenInclude(a => a.Property)
                 .FirstOrDefaultAsync(a => a.Id == id);
@@ -52,15 +56,17 @@ namespace MaintenanceLog.Data.Services.Server
 
         public async Task<Asset> UpdateAsync(Asset entity)
         {
+            using var context = _contextFactory.CreateDbContext();
             _logger.LogDebug($"Updating asset: {entity}");
-            var result = _context.Assets!.Update(entity);
-            await _context.SaveChangesAsync();
+            var result = context.Assets!.Update(entity);
+            await context.SaveChangesAsync();
             return result.Entity;
         }
 
         public async Task<List<Asset>> GetByPropertyAsync(int propertyId)
         {
-            return await _context.Assets!
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Assets!
                 .Include(a => a.Area)
                 .ThenInclude(a => a.Property)
                 .Where(p => !p.Deleted)
@@ -70,7 +76,8 @@ namespace MaintenanceLog.Data.Services.Server
 
         public async Task<List<Asset>> GetByAreaAsync(int areaId)
         {
-            return await _context.Assets!
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Assets!
                 .Include(a => a.Area)
                 .ThenInclude(a => a.Property)
                 .Where(p => !p.Deleted)

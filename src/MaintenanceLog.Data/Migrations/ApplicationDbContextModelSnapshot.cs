@@ -115,7 +115,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Areas", (string)null);
                 });
 
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Asset", b =>
@@ -172,7 +172,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasIndex("AreaId");
 
-                    b.ToTable("Assets");
+                    b.ToTable("Assets", (string)null);
                 });
 
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Property", b =>
@@ -202,7 +202,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Properties");
+                    b.ToTable("Properties", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
