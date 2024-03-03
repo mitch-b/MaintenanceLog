@@ -12,12 +12,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Area>? Areas { get; set; }
     public DbSet<Asset>? Assets { get; set; }
     public DbSet<Property>? Properties { get; set; }
+    public DbSet<TaskType>? TaskTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Area>();
         modelBuilder.Entity<Asset>();
         modelBuilder.Entity<Property>();
+        modelBuilder.Entity<TaskType>();
 
         base.OnModelCreating(modelBuilder);
     }

@@ -1,8 +1,15 @@
 @page "/settings"
 
+@using MaintenanceLog.Client.Components.Admin.TaskTypes
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize]
 
 <PageTitle>Settings</PageTitle>
 
+<h3>Task Types</h3>
+<p>
+    Separate your tasks into different types to help organize and categorize.
+    Create different schedules based on type.
+</p>
+<TaskTypeGrid />
