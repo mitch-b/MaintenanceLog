@@ -29,4 +29,8 @@
     <Folder Include="Components\Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\MaintenanceLog.Client\Pages\Settings\ResetModal.razor" Link="ResetModal.razor" />
+  </ItemGroup>
+
 </Project>

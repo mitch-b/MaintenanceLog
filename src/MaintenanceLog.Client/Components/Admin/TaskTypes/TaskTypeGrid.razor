@@ -19,11 +19,9 @@
                 <tr>
                     <td>@taskType.Name</td>
                     <td>
-                        <!-- edit button that includes id -->
                         <NavLink class="btn btn-primary" href=@($"/settings/task-types/{taskType.Id}")>
                             Edit
                         </NavLink>
-                        <!-- delete button that includes id -->
                         <button class="btn btn-danger" @onclick="() => DeleteTaskType(taskType.Id)">
                             Delete
                         </button>

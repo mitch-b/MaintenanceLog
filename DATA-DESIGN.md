@@ -35,10 +35,6 @@
     * **`Asset`(s)**
     * Task name
     * Task system-name (kebab-name but overridable)
-    * MQTT-enabled (can be _Phase4_)
-    * PerformedBy (User)
-    * PerformedOn (DateTime)
-    * Duration (Self-Recorded)
 * (Phase1) `TaskInstance`
   * An instance of a **`Task`**.
   * Can be auto-generated when a required lifespan hits.
@@ -48,7 +44,11 @@
     * **User**
     * Message (can say 'Triggered by Lifespan reached', or 'Overdue' or _something_)
     * StartedOn
+    * PerformedBy (User)
+    * PerformedOn (DateTime)
+    * Duration (Self-Recorded)
     * DueByDate
+    * MQTT-enabled (can be _Phase4_)
 * (Phase2) `Part`
   * Parts contain `PurchasedPart`s
   * Properties:
