@@ -21,26 +21,26 @@
   * Assets have associated **`Task`s**, **`Part`s**, **`Area`**.
   * Properties:
     * **`Area`**
-    * **`Task`(s)**
+    * **`TaskDefinition`(s)**
     * Name
     * Description
 * (Phase1) `TaskType`
   * Repair, Maintain, Clean, _Chore_, [user-assignable]
-* (Phase1) `Task`
+* (Phase1) `TaskDefinition`
   * _ie, Change Oil Filter, Refill Propane Tank, ..._
   * Tasks are associated under **`Asset`s**
-  * Tasks _may_ also associate with specific **`Asset`** components - **`Part`s** - that are relevant to the **Task**.
+  * Tasks _may_ also associate with specific **`Asset`** components - **`Part`s** - that are relevant to the **TaskDefinition**.
   * Properties:
     * **`TaskType`**
     * **`Asset`(s)**
     * Task name
     * Task system-name (kebab-name but overridable)
 * (Phase1) `TaskInstance`
-  * An instance of a **`Task`**.
+  * An instance of a **`TaskDefinition`**.
   * Can be auto-generated when a required lifespan hits.
   * Can be assigned to a **User**.
   * Properties:
-    * **Task**
+    * **TaskDefinition**
     * **User**
     * Message (can say 'Triggered by Lifespan reached', or 'Overdue' or _something_)
     * StartedOn

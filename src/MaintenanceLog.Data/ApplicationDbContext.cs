@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Asset>? Assets { get; set; }
     public DbSet<Property>? Properties { get; set; }
     public DbSet<TaskType>? TaskTypes { get; set; }
+    public DbSet<TaskDefinition>? TaskDefinitions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,6 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Asset>();
         modelBuilder.Entity<Property>();
         modelBuilder.Entity<TaskType>();
+        modelBuilder.Entity<TaskDefinition>();
 
         base.OnModelCreating(modelBuilder);
     }

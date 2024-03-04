@@ -31,12 +31,6 @@ namespace MaintenanceLog.Data.Services.Client
             return result ?? new List<TaskType>();
         }
 
-        public async Task<List<TaskType>> GetByPropertyAsync(int propertyId)
-        {
-            var result = await _httpClient.GetFromJsonAsync<List<TaskType>>($"api/properties/{propertyId}/task-types");
-            return result ?? new List<TaskType>();
-        }
-
         public async Task<TaskType> UpdateAsync(TaskType entity)
         {
             var response = await _httpClient

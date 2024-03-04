@@ -9,9 +9,11 @@ namespace MaintenanceLog.Controllers
     public class AssetController: ControllerBase
     {
         private readonly IAssetService _assetService;
-        public AssetController(IAssetService assetService)
+        private readonly ITaskDefinitionService _taskDefinitionService;
+        public AssetController(IAssetService assetService, ITaskDefinitionService taskDefinitionService)
         {
             _assetService = assetService;
+            _taskDefinitionService = taskDefinitionService;
         }
 
         [HttpGet]
@@ -45,6 +47,13 @@ namespace MaintenanceLog.Controllers
         {
             await _assetService.DeleteAsync(id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{id}/task-definitions")]
+        public async Task<ActionResult<Asset>> GetTaskDefinitions(int id)
+        {
+            return Ok(await _taskDefinitionService.GetByAssetAsync(id));
         }
     }
 }

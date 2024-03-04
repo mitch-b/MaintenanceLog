@@ -10,39 +10,39 @@ namespace MaintenanceLog.Controllers
     {
         private readonly ITaskTypeService _taskTypeService;
         public TaskTypeController(
-            ITaskTypeService areaService)
+            ITaskTypeService taskTypeService)
         {
-            _taskTypeService = areaService;
+            _taskTypeService = taskTypeService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IList<TaskType>>> GetAreas()
+        public async Task<ActionResult<IList<TaskType>>> GetTaskTypes()
         {
             return Ok(await _taskTypeService.GetAsync());
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<TaskType>> GetArea(int id)
+        public async Task<ActionResult<TaskType>> GetTaskType(int id)
         {
             return Ok(await _taskTypeService.FindAsync(id));
         }
 
         [HttpPost]
-        public async Task<ActionResult<TaskType>> AddArea([FromBody] TaskType area)
+        public async Task<ActionResult<TaskType>> AddTaskType([FromBody] TaskType taskType)
         {
-            return Ok(await _taskTypeService.AddAsync(area));
+            return Ok(await _taskTypeService.AddAsync(taskType));
         }
 
         [HttpPut]
-        public async Task<ActionResult<TaskType>> UpdateArea([FromBody] TaskType area)
+        public async Task<ActionResult<TaskType>> UpdateTaskType([FromBody] TaskType taskType)
         {
-            return Ok(await _taskTypeService.UpdateAsync(area));
+            return Ok(await _taskTypeService.UpdateAsync(taskType));
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult<TaskType>> DeleteArea(int id)
+        public async Task<ActionResult<TaskType>> DeleteTaskType(int id)
         {
             await _taskTypeService.DeleteAsync(id);
             return Ok();
