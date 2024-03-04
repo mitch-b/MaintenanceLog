@@ -9,10 +9,14 @@ namespace MaintenanceLog.Controllers
     public class TaskTypeController: ControllerBase
     {
         private readonly ITaskTypeService _taskTypeService;
+        private readonly ITaskDefinitionService _taskDefinitionService;
+
         public TaskTypeController(
-            ITaskTypeService taskTypeService)
+            ITaskTypeService taskTypeService,
+            ITaskDefinitionService taskDefinitionService)
         {
             _taskTypeService = taskTypeService;
+            _taskDefinitionService = taskDefinitionService;
         }
 
         [HttpGet]
@@ -46,6 +50,13 @@ namespace MaintenanceLog.Controllers
         {
             await _taskTypeService.DeleteAsync(id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{id}/task-definitions")]
+        public async Task<ActionResult<Asset>> GetTaskDefinitions(int id)
+        {
+            return Ok(await _taskDefinitionService.GetByTaskTypeAsync(id));
         }
     }
 }

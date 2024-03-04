@@ -57,5 +57,11 @@ namespace MaintenanceLog.Data.Services.Client
             var result = await _httpClient.GetFromJsonAsync<List<TaskDefinition>>($"api/assets/{assetId}/task-definitions");
             return result ?? new List<TaskDefinition>();
         }
+
+        public async Task<List<TaskDefinition>> GetByTaskTypeAsync(int taskTypeId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<TaskDefinition>>($"api/task-types/{taskTypeId}/task-definitions");
+            return result ?? new List<TaskDefinition>();
+        }
     }
 }

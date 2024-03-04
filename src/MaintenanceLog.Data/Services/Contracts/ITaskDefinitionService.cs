@@ -7,5 +7,6 @@ namespace MaintenanceLog.Data.Services.Contracts
         Task<List<TaskDefinition>> GetByPropertyAsync(int propertyId);
         Task<List<TaskDefinition>> GetByAreaAsync(int areaId);
         Task<List<TaskDefinition>> GetByAssetAsync(int assetId);
+        Task<List<TaskDefinition>> GetByTaskTypeAsync(int taskTypeId);
     }
 }

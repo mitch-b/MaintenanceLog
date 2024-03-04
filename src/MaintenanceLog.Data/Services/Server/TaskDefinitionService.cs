@@ -38,13 +38,20 @@ namespace MaintenanceLog.Data.Services.Server
         public async Task<List<TaskDefinition>> GetAsync()
         {
             using var context = _contextFactory.CreateDbContext();
-            return await context.TaskDefinitions!.Where(p => !p.Deleted).ToListAsync();
+            return await context.TaskDefinitions!
+                .Where(p => !p.Deleted)
+                .Include(td => td.Asset)
+                .Include(td => td.TaskType)
+                .ToListAsync();
         }
 
         public async Task<TaskDefinition?> FindAsync(int id)
         {
             using var context = _contextFactory.CreateDbContext();
-            return await context.TaskDefinitions!.FindAsync([id]);
+            return await context.TaskDefinitions!
+                .Include(td => td.Asset)
+                .Include(td => td.TaskType)
+                .FirstOrDefaultAsync(td => td.Id == id);
         }
 
         public async Task<TaskDefinition> UpdateAsync(TaskDefinition entity)
@@ -63,6 +70,7 @@ namespace MaintenanceLog.Data.Services.Server
                 .Include(p => p.Asset)
                 .ThenInclude(a => a.Area)
                 .ThenInclude(a => a.Property)
+                .Include(td => td.TaskType)
                 .Where(p => !p.Deleted)
                 .Where(p => p.Asset!.Area != null && p.Asset.Area.PropertyId == propertyId)
                 .ToListAsync();
@@ -74,6 +82,7 @@ namespace MaintenanceLog.Data.Services.Server
             return await context.TaskDefinitions!
                 .Include(p => p.Asset)
                 .ThenInclude(a => a.Area)
+                .Include(td => td.TaskType)
                 .Where(p => !p.Deleted)
                 .Where(p => p.Asset!.AreaId == areaId)
                 .ToListAsync();
@@ -84,8 +93,20 @@ namespace MaintenanceLog.Data.Services.Server
             using var context = _contextFactory.CreateDbContext();
             return await context.TaskDefinitions!
                 .Include(p => p.Asset)
+                .Include(td => td.TaskType)
                 .Where(p => !p.Deleted)
                 .Where(p => p.AssetId == assetId)
+                .ToListAsync();
+        }
+
+        public async Task<List<TaskDefinition>> GetByTaskTypeAsync(int taskTypeId)
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.TaskDefinitions!
+                .Include(td => td.Asset)
+                .Include(td => td.TaskType)
+                .Where(p => !p.Deleted)
+                .Where(p => p.TaskTypeId == taskTypeId)
                 .ToListAsync();
         }
     }
