@@ -5,12 +5,13 @@
 
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
+@using System.Linq
 
 @inject IAssetService AssetService
 @inject IAreaService AreaService
 @inject IPropertyService PropertyService
 @inject ITaskTypeService TaskTypeService
-@* @inject ITaskService TaskService *@
+@inject ITaskDefinitionService TaskDefinitionService
 
 <button class="btn btn-danger" @onclick="OpenModal">
     Reset Settings
@@ -35,7 +36,7 @@
             <input type="checkbox" @bind="resetAssets">
             <label for="setting3"> Assets</label><br>
 
-            <input type="checkbox" @bind="resetTasks">
+            <input type="checkbox" @bind="resetTaskDefinitions">
             <label for="setting2"> Tasks</label><br>
 
             <button class="btn btn-danger" @onclick="ResetSettings">
@@ -85,9 +86,12 @@
 </style>
 
 @code {
+    [Parameter]
+    public EventCallback OnReset { get; set; }
+
     private bool isModalOpen = false;
     private bool resetTaskTypes = false;
-    private bool resetTasks = false;
+    private bool resetTaskDefinitions = false;
     private bool _resetAssets = false;
     private bool _resetAreas = false;
     private bool _resetProperties = false;
@@ -100,7 +104,7 @@
             _resetProperties = value;
             if (value)
             {
-                resetTasks = true;
+                resetTaskDefinitions = true;
                 resetAssets = true;
                 resetAreas = true;
             }
@@ -115,7 +119,7 @@
             _resetAreas = value;
             if (value)
             {
-                resetTasks = true;
+                resetTaskDefinitions = true;
                 resetAssets = true;
             }
         }
@@ -129,7 +133,7 @@
             _resetAssets = value;
             if (value)
             {
-                resetTasks = true;
+                resetTaskDefinitions = true;
             }
         }
     }
@@ -146,44 +150,56 @@
 
     private async Task ResetSettings()
     {
-        if (resetTasks)
+        if (resetTaskDefinitions)
         {
             // Reset tasks
-            // TODO
+            var taskDefinitions = await TaskDefinitionService.GetAsync();
+            foreach (var taskDefinition in taskDefinitions)
+            {
+                await TaskDefinitionService.DeleteAsync(taskDefinition);
+            }
         }
 
         if (resetTaskTypes)
         {
             // Reset task types
-            var taskTypes = await TaskTypeService.GetAsync();
-            foreach (var taskType in taskTypes)
-            {
-                await TaskTypeService.DeleteAsync(taskType);
-            }
-
+            var defaultTaskTypeName = "Unassigned";
             var defaultTaskTypes = new List<TaskType>
             {
-                new TaskType() { Name = "Unassigned" },
+                new TaskType() { Name = defaultTaskTypeName },
                 new TaskType() { Name = "Chore" },
                 new TaskType() { Name = "Repair" },
                 new TaskType() { Name = "Maintain" },
                 new TaskType() { Name = "Clean" },
             };
 
-            foreach (var newTaskType in defaultTaskTypes)
+            var taskTypes = await TaskTypeService.GetAsync();
+            foreach (var taskType in taskTypes.Where(tt => !defaultTaskTypes.Any(dtt => dtt.Name == tt.Name)))
+            {
+                await TaskTypeService.DeleteAsync(taskType);
+            }
+
+
+            // Add missing task types, only delete the non-default ones. 
+            // If any task definitions are using a non-default task type, set them to the default task type.
+
+            taskTypes = await TaskTypeService.GetAsync();
+
+            if (!resetTaskDefinitions)
+            {
+                var defaultTaskType = (await TaskTypeService.GetAsync()).First(tt => tt.Name == defaultTaskTypeName);
+                var taskDefinitions = await TaskDefinitionService.GetAsync();
+                foreach (var taskDefinition in taskDefinitions.Where(td => !taskTypes.Any(tt => tt.Id == td.TaskTypeId)))
+                {
+                    taskDefinition.TaskTypeId = defaultTaskType.Id;
+                    await TaskDefinitionService.UpdateAsync(taskDefinition);
+                }
+            }
+
+            foreach (var newTaskType in defaultTaskTypes.Where(dtt => !taskTypes.Any(tt => tt.Name == dtt.Name)))
             {
                 await TaskTypeService.AddAsync(newTaskType);
             }
-
-            // if (!resetTasks)
-            // {
-            //     var tasks = await TaskService.GetAsync();
-            //     foreach (var task in tasks)
-            //     {
-            //         task.TaskType = taskTypes.First(tt => tt.Name == "Unassigned");
-            //         await TaskService.UpdateAsync(task);
-            //     }
-            // }
         }
 
         if (resetAssets)
@@ -214,6 +230,11 @@
             {
                 await PropertyService.DeleteAsync(property);
             }
+        }
+
+        if (OnReset.HasDelegate)
+        {
+            await OnReset.InvokeAsync();
         }
 
         isModalOpen = false;
