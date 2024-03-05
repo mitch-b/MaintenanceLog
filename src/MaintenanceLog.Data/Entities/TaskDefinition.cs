@@ -10,6 +10,9 @@ public class TaskDefinition : BaseEntity
     public int TaskTypeId { get; set; }
     public TaskType? TaskType { get; set; }
 
-    public int AssetId { get; set; }
+    public int? AssetId { get; set; }
     public Asset? Asset { get; set; }
+
+    public int? AreaId { get; set; }
+    public Area? Area { get; set; }
 }
