@@ -10,12 +10,15 @@ namespace MaintenanceLog.Controllers
     {
         private readonly IAreaService _areaService;
         private readonly IAssetService _assetService;
+        private readonly ITaskDefinitionService _taskDefinitionService;
         public AreaController(
             IAreaService areaService,
-            IAssetService assetService)
+            IAssetService assetService,
+            ITaskDefinitionService taskDefinitionService)
         {
             _areaService = areaService;
             _assetService = assetService;
+            _taskDefinitionService = taskDefinitionService;
         }
 
         [HttpGet]
@@ -56,6 +59,13 @@ namespace MaintenanceLog.Controllers
         public async Task<ActionResult<IList<Asset>>> GetAssets(int id)
         {
             return Ok(await _assetService.GetByAreaAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{id}/task-definitions")]
+        public async Task<ActionResult<Asset>> GetTaskDefinitions(int id)
+        {
+            return Ok(await _taskDefinitionService.GetByAreaAsync(id));
         }
     }
 }

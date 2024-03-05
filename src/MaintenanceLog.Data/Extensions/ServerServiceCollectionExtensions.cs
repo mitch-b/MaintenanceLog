@@ -37,8 +37,6 @@ namespace MaintenanceLog.Data.Extensions
                 throw new InvalidOperationException("Invalid database provider.");
             }
 
-            //services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
-
             services.AddScoped(http => new HttpClient
             {
                 BaseAddress = new Uri(configuration!.GetSection("BaseUri")!.Value!)
@@ -48,6 +46,7 @@ namespace MaintenanceLog.Data.Extensions
             services.AddScoped<IAreaService, AreaService>();
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<ITaskTypeService, TaskTypeService>();
+            services.AddScoped<ITaskDefinitionService, TaskDefinitionService>();
 
             return services;
         }

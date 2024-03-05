@@ -13,3 +13,24 @@
     Create different schedules based on type.
 </p>
 <TaskTypeGrid />
+
+<br />
+<hr />
+<br />
+
+<h3>Reset</h3>
+<p>
+    Reset the application to its default state. Select which types in the modal you'd like to reset to defaults.
+</p>
+<ResetModal OnReset=HandleReset />
+
+@code 
+{
+    private void HandleReset()
+    {
+        // ... do something
+        // perhaps look at CascadingValues instead to force a refresh of the TaskTypeGrid
+        // https://stackoverflow.com/a/69667744 
+        // if I change the cascading binded value, it'll automatically refresh the child component via OnParametersSet event
+    }
+}

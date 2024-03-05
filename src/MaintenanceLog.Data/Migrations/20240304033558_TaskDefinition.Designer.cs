@@ -4,6 +4,7 @@ using MaintenanceLog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceLog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240304033558_TaskDefinition")]
+    partial class TaskDefinition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,10 +216,7 @@ namespace MaintenanceLog.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AssetId")
+                    b.Property<int>("AssetId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
@@ -236,8 +236,6 @@ namespace MaintenanceLog.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
 
                     b.HasIndex("AssetId");
 
@@ -427,21 +425,17 @@ namespace MaintenanceLog.Data.Migrations
 
             modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskDefinition", b =>
                 {
-                    b.HasOne("MaintenanceLog.Data.Entities.Area", "Area")
-                        .WithMany()
-                        .HasForeignKey("AreaId");
-
                     b.HasOne("MaintenanceLog.Data.Entities.Asset", "Asset")
                         .WithMany()
-                        .HasForeignKey("AssetId");
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MaintenanceLog.Data.Entities.TaskType", "TaskType")
                         .WithMany()
                         .HasForeignKey("TaskTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Area");
 
                     b.Navigation("Asset");
 
