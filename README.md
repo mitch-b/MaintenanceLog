@@ -19,7 +19,7 @@ _To do..._
 To quickstart with Docker,
 
 ```bash
-docker run -d -p 8080:8080 ghcr.io/mitch-b/maintenance-log:latest
+docker run --rm -it -p 8080:8080 ghcr.io/mitch-b/maintenancelog:latest
 ```
 
 Then open your browser to `http://localhost:8080`.
