@@ -39,8 +39,9 @@ namespace MaintenanceLog.Data.Services.Server
         {
             using var context = _contextFactory.CreateDbContext();
             return await context.TaskDefinitions!
-                .Where(p => !p.Deleted)
+                .Where(td => !td.Deleted)
                 .Include(td => td.Asset)
+                .Include(td => td.Area)
                 .Include(td => td.TaskType)
                 .ToListAsync();
         }
@@ -50,6 +51,7 @@ namespace MaintenanceLog.Data.Services.Server
             using var context = _contextFactory.CreateDbContext();
             return await context.TaskDefinitions!
                 .Include(td => td.Asset)
+                .Include(td => td.Area)
                 .Include(td => td.TaskType)
                 .FirstOrDefaultAsync(td => td.Id == id);
         }
@@ -67,12 +69,12 @@ namespace MaintenanceLog.Data.Services.Server
         {
             using var context = _contextFactory.CreateDbContext();
             return await context.TaskDefinitions!
-                .Include(p => p.Asset)
+                .Include(td => td.Asset)
                 .ThenInclude(a => a.Area)
                 .ThenInclude(a => a.Property)
                 .Include(td => td.TaskType)
-                .Where(p => !p.Deleted)
-                .Where(p => p.Asset!.Area != null && p.Asset.Area.PropertyId == propertyId)
+                .Where(td => !td.Deleted)
+                .Where(td => td.Asset!.Area != null && td.Asset.Area.PropertyId == propertyId)
                 .ToListAsync();
         }
 
@@ -80,11 +82,11 @@ namespace MaintenanceLog.Data.Services.Server
         {
             using var context = _contextFactory.CreateDbContext();
             return await context.TaskDefinitions!
-                .Include(p => p.Asset)
-                .ThenInclude(a => a.Area)
+                .Include(td => td.Asset)
+                .Include(td => td.Area)
                 .Include(td => td.TaskType)
-                .Where(p => !p.Deleted)
-                .Where(p => p.Asset!.AreaId == areaId)
+                .Where(td => !td.Deleted)
+                .Where(td => td.Asset!.AreaId == areaId)
                 .ToListAsync();
         }
 
@@ -92,10 +94,10 @@ namespace MaintenanceLog.Data.Services.Server
         {
             using var context = _contextFactory.CreateDbContext();
             return await context.TaskDefinitions!
-                .Include(p => p.Asset)
+                .Include(td => td.Asset)
                 .Include(td => td.TaskType)
-                .Where(p => !p.Deleted)
-                .Where(p => p.AssetId == assetId)
+                .Where(td => !td.Deleted)
+                .Where(td => td.AssetId == assetId)
                 .ToListAsync();
         }
 

@@ -8,6 +8,8 @@
 @inject IAreaService AreaService
 @inject NavigationManager NavigationManager
 
+<PageTitle></PageTitle>
+
 <h3>Task Definitions</h3>
 
 
@@ -68,7 +70,7 @@ else
             @foreach (var taskDefinition in taskDefinitions)
             {
                 <tr>
-                    <td><a href="@($"/task-definitions/{taskDefinition.Id}")">@taskDefinition.Name</a></td>
+                    <td><a href="@($"/task-definitions/edit/{taskDefinition.Id}")">@taskDefinition.Name</a></td>
                     <td>@taskDefinition.Asset?.Name</td>
                     <td>@taskDefinition.Area?.Name</td>
                     <td>
