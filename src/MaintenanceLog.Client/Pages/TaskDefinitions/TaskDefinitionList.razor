@@ -1,5 +1,6 @@
 @page "/task-definitions"
 
+@using MaintenanceLog.Client.Components.Admin.TaskDefinitions
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
 
@@ -50,46 +51,12 @@ else
     <p><em>Loading...</em></p>
 }
 
-<button class="btn btn-primary" @onclick="LoadTaskDefinitions">Filter</button>
 <button class="btn btn-primary" @onclick="ResetPage">Clear Filters</button>
 
-
-<!-- Task Definitions Table -->
-@if (taskDefinitions is not null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Asset</th>
-                <th>Area</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var taskDefinition in taskDefinitions)
-            {
-                <tr>
-                    <td><a href="@($"/task-definitions/edit/{taskDefinition.Id}")">@taskDefinition.Name</a></td>
-                    <td>@taskDefinition.Asset?.Name</td>
-                    <td>@taskDefinition.Area?.Name</td>
-                    <td>
-                        <button class="btn btn-primary" @onclick="() => EditTaskDefinition(taskDefinition.Id)">Edit</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteTaskDefinition(taskDefinition.Id)">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <button class="btn btn-primary" @onclick="@(() => NavigationManager.NavigateTo("/task-definitions/add"))">New Task Definition</button>
-}
-else
-{
-    <p><em>Loading...</em></p>
-}
+<TaskDefinitionGrid AreaId="areaFilter" AssetId="assetFilter" />
 
 @code {
+
     private List<TaskDefinition>? taskDefinitions;
     private List<Asset>? assets;
     private List<Area>? areas;
@@ -100,32 +67,11 @@ else
     {
         assets = await AssetService.GetAsync();
         areas = await AreaService.GetAsync();
-        await LoadTaskDefinitions();
-    }
-
-    private async Task LoadTaskDefinitions()
-    {
-        taskDefinitions = (await TaskDefinitionService.GetAsync())
-            .Where(t => !assetFilter.HasValue || (t.Asset != null && assetFilter == t.Asset.Id))
-            .Where(t => !areaFilter.HasValue || (t.Area != null && areaFilter == t.Area.Id))
-            .ToList();
-    }
-
-    private void EditTaskDefinition(int id)
-    {
-        NavigationManager.NavigateTo($"/task-definitions/edit/{id}");
     }
 
     private async Task ResetPage()
     {
         assetFilter = null;
         areaFilter = null;
-        await LoadTaskDefinitions();
-    }
-
-    private async Task DeleteTaskDefinition(int id)
-    {
-        await TaskDefinitionService.DeleteAsync(id);
-        await LoadTaskDefinitions();
     }
 }

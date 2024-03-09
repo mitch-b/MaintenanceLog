@@ -1,0 +1,80 @@
+﻿@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services.Contracts
+
+@inject IJSRuntime JsRuntime
+@inject ITaskDefinitionService TaskDefinitionService
+@inject NavigationManager NavigationManager
+
+<!-- Task Definitions Table -->
+@if (taskDefinitions != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Asset</th>
+                <th>Area</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var taskDefinition in taskDefinitions)
+            {
+                <tr>
+                    <td><a href="@($"/task-definitions/edit/{taskDefinition.Id}")">@taskDefinition.Name</a></td>
+                    <td>@taskDefinition.Asset?.Name</td>
+                    <td>@taskDefinition.Area?.Name</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => DeleteTaskDefinition(taskDefinition.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-primary" @onclick="@(() => NavigationManager.NavigateTo("/task-definitions/add"))">New Task Definition</button>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    [Parameter]
+    public int? AreaId { get; set; }
+    [Parameter]
+    public int? AssetId { get; set; }
+
+    private List<TaskDefinition>? taskDefinitions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+        await LoadTaskDefinitions();
+    }
+
+    private async Task LoadTaskDefinitions()
+    {
+        taskDefinitions = (await TaskDefinitionService.GetAsync())
+            .Where(t => !AssetId.HasValue || (t.Asset != null && AssetId == t.Asset.Id))
+            .Where(t => !AreaId.HasValue || (t.Area != null && AreaId == t.Area.Id))
+            .ToList();
+        
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteTaskDefinition(int id)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await TaskDefinitionService.DeleteAsync(id);
+            await LoadTaskDefinitions();
+        }
+    }
+}
