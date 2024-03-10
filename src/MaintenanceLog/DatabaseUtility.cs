@@ -17,7 +17,8 @@ public static class DatabaseUtility
         // Result is true if the database had to be created.
         if (await context.Database.EnsureCreatedAsync())
         {
-            // ... seed the database
+            // ... 
         }
+        await context.Database.MigrateAsync();
     }
 }
