@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceLog.Common.Models.Configuration;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,8 @@ using (var serviceProvider = builder.Services.BuildServiceProvider())
     var maintenanceLogSettingsOptions = serviceProvider.GetService<IOptions<MaintenanceLogSettings>>()
         ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
     var maintenanceLogSettings = maintenanceLogSettingsOptions.Value;
+    
+    Console.WriteLine($"MaintenanceLogSettings: {JsonSerializer.Serialize(maintenanceLogSettings)}");
     
     builder.Services
         .AddFluentEmail(builder.Configuration.GetValue<string>(maintenanceLogSettings.EmailConfig.SmtpFrom))
