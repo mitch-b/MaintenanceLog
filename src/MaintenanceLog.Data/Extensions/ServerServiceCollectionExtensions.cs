@@ -4,6 +4,7 @@ using MaintenanceLog.Data.Services.Contracts;
 using MaintenanceLog.Data.Services.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace MaintenanceLog.Data.Extensions
 {
@@ -13,7 +14,9 @@ namespace MaintenanceLog.Data.Extensions
         {
             using var localServiceProvider = services.BuildServiceProvider();
 
-            var maintenanceLogSettings = localServiceProvider.GetService<MaintenanceLogSettings>();
+            var maintenanceLogSettingsOptions = localServiceProvider.GetService<IOptions<MaintenanceLogSettings>>();
+            var maintenanceLogSettings = maintenanceLogSettingsOptions?.Value
+                ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
             var databaseConfigurationService = localServiceProvider.GetService<IDatabaseConfigurationService>();
 
             var connectionString = databaseConfigurationService?.GetConnectionString()
