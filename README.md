@@ -58,20 +58,27 @@ After setting up Codespaces secrets in your repo in GitHub, you can apply secret
 
 ```bash
 cd src/MaintenanceLog
-dotnet user-secrets set EmailConfig:SmtpUser $EMAILCONFIG_SMTPUSER
-dotnet user-secrets set EmailConfig:SmtpPass $EMAILCONFIG_SMTPPASS
-dotnet user-secrets set EmailConfig:SmtpHost $EMAILCONFIG_SMTPHOST
-dotnet user-secrets set EmailConfig:SmtpPort $EMAILCONFIG_SMTPPORT
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpUser $EMAILCONFIG_SMTPUSER
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPass $EMAILCONFIG_SMTPPASS
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpHost $EMAILCONFIG_SMTPHOST
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPort $EMAILCONFIG_SMTPPORT
 ```
 
 To use `sqlite`, use the following appsettings:
 
 ```json
 {
-  "ConnectionStrings": {
-    "MaintenanceLogDb": "DataSource=/data/maintenancelogdb.db;Cache=Shared"
+  "MaintenanceLogSettings": {
+    "Database": {
+      "DbProvider": "sqlite",
+      "Name": "/data/maintenancelogdb.db;Cache=Shared",
+      "Host": "",
+      "User": "",
+      "Password": ""
+    },
+    // ...
   },
-  "DbProvider": "sqlite"
+  // ...
 }
 ```
 
@@ -79,10 +86,17 @@ To use `mssql` in a sidecar container in the Codespace, use the following appset
 
 ```json
 {
-  "ConnectionStrings": {
-    "MaintenanceLogDb": "Server=db;Database=maintenancelogdb;User Id=sa;Password='This is publ1c, so whatever works!';MultipleActiveResultSets=true;Encrypt=False;"
+  "MaintenanceLogSettings": {
+    "Database": {
+      "DbProvider": "mssql",
+      "Name": "MaintenanceLogDb",
+      "Host": "localhost",
+      "User": "sa",
+      "Password": "This is publ1c, so whatever works!"
+    },
+    // ...
   },
-  "DbProvider": "mssql"
+  // ...
 }
 ```
 
@@ -138,10 +152,10 @@ For example, `bi-house-gear`, I appended `-nav-menu` to follow convention, and c
 ```bash
 cd src/MaintenanceLog
 
-dotnet user-secrets set EmailConfig:SmtpUser myuser
-dotnet user-secrets set EmailConfig:SmtpPass mypass
-dotnet user-secrets set EmailConfig:SmtpHost my-smtp.host.com
-dotnet user-secrets set EmailConfig:SmtpPort 587
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpUser myuser
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPass mypass
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpHost my-smtp.host.com
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPort 587
 ```
 
 ## License
