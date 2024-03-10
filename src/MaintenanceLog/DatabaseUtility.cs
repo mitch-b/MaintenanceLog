@@ -14,6 +14,10 @@ public static class DatabaseUtility
             .UseLoggerFactory(factory);
 
         using var context = new ApplicationDbContext(builder.Options);
+
+        Console.WriteLine("Ensuring database is created and seeded with defaults.");
+        Console.WriteLine($"Database connection string: {context.Database.GetDbConnection().ConnectionString}");
+
         // Result is true if the database had to be created.
         if (await context.Database.EnsureCreatedAsync())
         {
