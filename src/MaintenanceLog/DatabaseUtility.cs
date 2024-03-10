@@ -17,11 +17,11 @@ public static class DatabaseUtility
         {
             Console.WriteLine("Database already exists or was not otherwise created.");
         }
-        if ((await context.Database.GetPendingMigrationsAsync()).Any())
-        {
-            // not good with distributed UI... but for now...
-            Console.WriteLine("Applying migrations...");
-            await context.Database.MigrateAsync();
-        }
+        // if ((await context.Database.GetPendingMigrationsAsync()).Any())
+        // {
+        //     // not good with distributed UI... but for now...
+        //     Console.WriteLine("Applying migrations...");
+        //     await context.Database.MigrateAsync();
+        // }
     }
 }

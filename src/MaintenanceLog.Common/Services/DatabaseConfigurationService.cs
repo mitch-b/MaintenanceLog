@@ -21,7 +21,7 @@ public class DatabaseConfigurationService(IOptions<MaintenanceLogSettings> maint
             stringBuilder.Append($"Server={_maintenanceLogSettings.Database.Host};");
             stringBuilder.Append($"Database={_maintenanceLogSettings.Database.Name};");
             stringBuilder.Append($"User Id={_maintenanceLogSettings.Database.User};");
-            stringBuilder.Append($"Password={_maintenanceLogSettings.Database.Password};");
+            stringBuilder.Append($"Password='{_maintenanceLogSettings.Database.Password}';");
             stringBuilder.Append($"Encrypt=False;"); // TODO: make this configuration option
         }
         else if (string.Equals(_maintenanceLogSettings.Database.DbProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
