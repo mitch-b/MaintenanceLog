@@ -1,4 +1,5 @@
 ﻿using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Extensions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,16 +15,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Property>? Properties { get; set; }
     public DbSet<TaskType>? TaskTypes { get; set; }
     public DbSet<TaskDefinition>? TaskDefinitions { get; set; }
+    public DbSet<TaskInstance>? TaskInstances { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Area>();
-        modelBuilder.Entity<Asset>();
-        modelBuilder.Entity<Property>();
-        modelBuilder.Entity<TaskType>();
-        modelBuilder.Entity<TaskDefinition>();
-
         base.OnModelCreating(modelBuilder);
+
+        SqlDefaultValueAttributeConvention.Apply(modelBuilder);
     }
 
     public async Task<int> SaveChangesAsync()
