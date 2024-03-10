@@ -15,6 +15,7 @@ RUN echo "Configuration: $BUILD_CONFIGURATION"
 
 WORKDIR /src
 COPY ["MaintenanceLog/MaintenanceLog.csproj", "MaintenanceLog/"]
+COPY ["MaintenanceLog.Common/MaintenanceLog.Common.csproj", "MaintenanceLog.Common/"]
 COPY ["MaintenanceLog.Data/MaintenanceLog.Data.csproj", "MaintenanceLog.Data/"]
 COPY ["MaintenanceLog.Client/MaintenanceLog.Client.csproj", "MaintenanceLog.Client/"]
 COPY ["Directory.*.props", "."]

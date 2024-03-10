@@ -1,5 +1,6 @@
 ﻿using Blazor.QrCodeGen;
 using MaintenanceLog.Client;
+using MaintenanceLog.Common.Extensions;
 using MaintenanceLog.Data.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -13,6 +14,7 @@ builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticat
 
 
 builder.Services.AddScoped(http => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddMaintenanceLogCommonServices(builder.Configuration);
 builder.Services.AddMaintenanceLogClientDataServices();
 
 builder.Services.AddTransient(sp => new ModuleCreator(sp.GetService<IJSRuntime>()));
