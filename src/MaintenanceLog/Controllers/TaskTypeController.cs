@@ -1,9 +1,11 @@
 ﻿using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaintenanceLog.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/task-types")]
     public class TaskTypeController: ControllerBase
