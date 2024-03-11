@@ -58,8 +58,11 @@ using (var serviceProvider = builder.Services.BuildServiceProvider())
     
     Console.WriteLine($"MaintenanceLogSettings: {JsonSerializer.Serialize(maintenanceLogSettings)}");
     
+    var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig.SmtpFrom) 
+        ? null 
+        : maintenanceLogSettings.EmailConfig.SmtpFrom;
     builder.Services
-        .AddFluentEmail(builder.Configuration.GetValue<string>(maintenanceLogSettings.EmailConfig.SmtpFrom))
+        .AddFluentEmail(fromAddress)
         .AddSmtpSender(
             maintenanceLogSettings.EmailConfig.SmtpHost, 
             maintenanceLogSettings.EmailConfig.SmtpPort ?? 587,
