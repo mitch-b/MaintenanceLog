@@ -24,7 +24,7 @@ docker run --rm -it -p 8080:8080 ghcr.io/mitch-b/maintenancelog:latest
 
 Then open your browser to `http://localhost:8080`.
 
-To run with a sidecar SQL database container, use the provided [`docker-compose.yml`](./docker-compose.yml) file.
+To run with a sidecar SQL database container **(recommended)**, use the provided [`docker-compose.yml`](./docker-compose.yml) file.
 
 ## Features
 
@@ -59,9 +59,11 @@ After setting up Codespaces secrets in your repo in GitHub, you can apply secret
 ```bash
 cd src/MaintenanceLog
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpUser $EMAILCONFIG_SMTPUSER
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpFrom $EMAILCONFIG_SMTPUSER
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPass $EMAILCONFIG_SMTPPASS
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpHost $EMAILCONFIG_SMTPHOST
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPort $EMAILCONFIG_SMTPPORT
+dotnet user-secrets set MaintenanceLogSettings:Database:Host db
 ```
 
 To use `sqlite`, use the following appsettings:
@@ -131,6 +133,13 @@ And the database can be upgraded with the following command:
 dotnet ef database update --startup-project ../MaintenanceLog/
 ```
 
+... or with the following command:
+
+```bash
+# ./.scripts/add-migration.ps1
+./.scripts/add-migration.sh
+```
+
 ### Icon Selection
 
 Browse Bootstrap Icons at [icons.getbootstrap.com](https://icons.getbootstrap.com/).
@@ -153,6 +162,7 @@ For example, `bi-house-gear`, I appended `-nav-menu` to follow convention, and c
 cd src/MaintenanceLog
 
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpUser myuser
+dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpFrom myuser@host.com
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPass mypass
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpHost my-smtp.host.com
 dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPort 587
