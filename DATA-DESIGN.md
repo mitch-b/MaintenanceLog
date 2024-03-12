@@ -67,3 +67,15 @@
     * Notes
     * Vendor/Store
 * Notification?
+* Schedule?
+  * Automatically create a **TaskInstance** when a **TaskDefinition** is due.
+  * Automatically create a **TaskInstance** when a **Part** is due for replacement.
+* User-Defined Fields
+  * Installations can define custom fields for:
+    * **Property**
+    * **Area**
+    * **Asset**
+    * **TaskDefinition**
+    * **TaskInstance**
+    * **Part**
+    * **PurchasedPart**
