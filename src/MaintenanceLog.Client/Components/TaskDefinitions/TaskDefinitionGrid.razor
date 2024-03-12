@@ -3,6 +3,7 @@
 
 @inject IJSRuntime JsRuntime
 @inject ITaskDefinitionService TaskDefinitionService
+@* @inject ITaskInstanceService TaskInstanceService *@
 @inject NavigationManager NavigationManager
 
 <!-- Task Definitions Table -->
@@ -11,6 +12,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Start</th>
                 <th>Name</th>
                 <th>Asset</th>
                 <th>Area</th>
@@ -21,6 +23,14 @@
             @foreach (var taskDefinition in taskDefinitions)
             {
                 <tr>
+                    <!-- show start icon in a green button -->
+                    <td>
+                        <button class="btn btn-success" title="Start" @onclick="() => StartTaskInstance(taskDefinition)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-play" viewBox="0 0 16 16">
+                                <path d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z"/>
+                            </svg>
+                        </button>
+                    </td>
                     <td><a href="@($"/task-definitions/edit/{taskDefinition.Id}")">@taskDefinition.Name</a></td>
                     <td>@taskDefinition.Asset?.Name</td>
                     <td>@taskDefinition.Area?.Name</td>
@@ -76,5 +86,18 @@ else
             await TaskDefinitionService.DeleteAsync(id);
             await LoadTaskDefinitions();
         }
+    }
+
+    private async Task StartTaskInstance(TaskDefinition taskDefinition)
+    {
+        var taskInstance = new TaskInstance
+        {
+            TaskDefinitionId = taskDefinition.Id,
+            StartedOn = DateTimeOffset.UtcNow,
+            AutomationMessage = "Started from the web app",
+            // Status = TaskInstanceStatus.InProgress
+        };
+        // await TaskInstanceService.AddAsync(taskInstance);
+        await Task.Delay(10);
     }
 }
