@@ -2,20 +2,22 @@ version: '3.8'
 
 services:
   app:
-    image: mitch-b/maintenancelog:latest
+    image: ghcr.io/mitch-b/maintenancelog:latest
     container_name: maintenancelog-app
-    build:
-      context: src
-      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       TZ: ${MAINTENANCELOG_TZ:-America/Chicago}
-      MAINTENANCELOGSETTINGS__DATABASE__DBPROVIDER: mssql
-      MAINTENANCELOGSETTINGS__DATABASE__HOST: db
-      MAINTENANCELOGSETTINGS__DATABASE__NAME: ${MAINTENANCELOG_DATABASE_NAME:-MaintenanceLog}
+      MAINTENANCELOGSETTINGS__DATABASE__DBPROVIDER: MSSQL
+      MAINTENANCELOGSETTINGS__DATABASE__HOST: ${MAINTENANCELOG_DATABASE_HOST:-db}
+      MAINTENANCELOGSETTINGS__DATABASE__NAME: ${MAINTENANCELOG_DATABASE_NAME:-MaintenanceLogDb}
       MAINTENANCELOGSETTINGS__DATABASE__USER: ${MAINTENANCELOG_DATABASE_USER:-sa}
       MAINTENANCELOGSETTINGS__DATABASE__PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
-      MAINTENANCELOGSETTINGS__DATABASE__DEVDROPDATABASE: "false"
+      MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPHOST: ${MAINTENANCELOG_EMAILCONFIG_HOST:-smtp.mailprovider.com}
+      MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPUSER: ${MAINTENANCELOG_EMAILCONFIG_USER:-from@myaccount.com}
+      MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPFROM: ${MAINTENANCELOG_EMAILCONFIG_FROM:-from@myaccount.com}
+      MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPPASS: ${MAINTENANCELOG_EMAILCONFIG_PASS:-mysmtppassword}
+      MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPPORT: 587
+      MAINTENANCELOGSETTINGS__BASEURI: ${MAINTENANCELOG_BASEURI:-https://mlog.local}
     ports:
       - ${MAINTENANCELOG_PORT:-8080}:8080
     depends_on:
@@ -28,8 +30,9 @@ services:
       MSSQL_SA_PASSWORD: ${MAINTENANCELOG_DATABASE_PASSWORD:-This is publ1c, so whatever works!}
       ACCEPT_EULA: Y
     volumes:
-      - ./.devcontainer/mssql/data:/var/opt/mssql/data
-      - ./.devcontainer/mssql/log:/var/opt/mssql/log
-      - ./.devcontainer/mssql/secrets:/var/opt/mssql/secrets
+      - maintenancelogdbdata:/var/opt/mssql
     ports:
       - ${MAINTENANCELOG_DATABASE_PORT:-1433}:1433
+
+volumes:
+  maintenancelogdbdata:
