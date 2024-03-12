@@ -50,6 +50,7 @@ namespace MaintenanceLog.Data.Extensions
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<ITaskTypeService, TaskTypeService>();
             services.AddScoped<ITaskDefinitionService, TaskDefinitionService>();
+            services.AddScoped<ITaskInstanceService, TaskInstanceService>();
 
             return services;
         }
