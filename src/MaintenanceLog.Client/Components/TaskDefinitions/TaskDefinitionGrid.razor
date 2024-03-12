@@ -3,7 +3,7 @@
 
 @inject IJSRuntime JsRuntime
 @inject ITaskDefinitionService TaskDefinitionService
-@* @inject ITaskInstanceService TaskInstanceService *@
+@inject ITaskInstanceService TaskInstanceService
 @inject NavigationManager NavigationManager
 
 <!-- Task Definitions Table -->
@@ -97,7 +97,6 @@ else
             AutomationMessage = "Started from the web app",
             // Status = TaskInstanceStatus.InProgress
         };
-        // await TaskInstanceService.AddAsync(taskInstance);
-        await Task.Delay(10);
+        await TaskInstanceService.AddAsync(taskInstance);
     }
 }
