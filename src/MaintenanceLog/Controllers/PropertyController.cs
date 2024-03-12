@@ -14,16 +14,19 @@ namespace MaintenanceLog.Controllers
         private readonly IAreaService _areaService;
         private readonly IAssetService _assetService;
         private readonly ITaskDefinitionService _taskDefinitionService;
+        private readonly ITaskInstanceService _taskInstanceService;
         public PropertyController(
             IPropertyService propertyService, 
             IAreaService areaService,
             IAssetService assetService,
-            ITaskDefinitionService taskDefinitionService)
+            ITaskDefinitionService taskDefinitionService,
+            ITaskInstanceService taskInstanceService)
         {
             _propertyService = propertyService;
             _areaService = areaService;
             _assetService = assetService;
             _taskDefinitionService = taskDefinitionService;
+            _taskInstanceService = taskInstanceService;
         }
 
         [HttpGet]
@@ -78,6 +81,13 @@ namespace MaintenanceLog.Controllers
         public async Task<ActionResult<Asset>> GetTaskDefinitions(int id)
         {
             return Ok(await _taskDefinitionService.GetByPropertyAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{id}/task-instances")]
+        public async Task<ActionResult<TaskInstance>> GetTaskInstances(int id)
+        {
+            return Ok(await _taskInstanceService.GetByPropertyAsync(id));
         }
     }
 }
