@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MaintenanceLog.Common\MaintenanceLog.Common.csproj" />
     <ProjectReference Include="..\MaintenanceLog.Data\MaintenanceLog.Data.csproj" />
   </ItemGroup>
 

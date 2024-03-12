@@ -1,0 +1,122 @@
+﻿@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services.Contracts
+@using MaintenanceLog.Common.Extensions
+
+@inject IJSRuntime JsRuntime
+@inject ITaskDefinitionService TaskDefinitionService
+@inject ITaskInstanceService TaskInstanceService
+@inject NavigationManager NavigationManager
+
+<!-- Task Instances Table -->
+@if (taskInstances != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Start</th>
+                <th>Name</th>
+                <th>Asset</th>
+                <th>Area</th>
+                <th>Completed On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var taskInstance in taskInstances)
+            {
+                <tr>
+                    <!-- show start icon in a green button -->
+                    <td>
+                        @if (taskInstance.CompletedOn is null)
+                        {
+                        <button class="btn btn-danger" title="Stop" @onclick="() => StopTaskInstance(taskInstance)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-stop" viewBox="0 0 16 16">
+                                <path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5z"/>
+                            </svg>
+                        </button>
+                        }
+                    </td>
+                    <td>@taskInstance.TaskDefinition!.Name</td>
+                    <td>@taskInstance.TaskDefinition!.Asset?.Name</td>
+                    <td>@taskInstance.TaskDefinition!.Area?.Name</td>
+                    <td>
+                        @if (taskInstance.CompletedOn.HasValue)
+                        {
+                            <span class="badge bg-success">
+                                @if (taskInstance.CompletedOn < DateTimeOffset.UtcNow.AddDays(-1))
+                                {
+                                    @taskInstance.CompletedOn.ToLocalTimeString()
+                                }
+                                else
+                                {
+                                    @taskInstance.CompletedOn.ToLocalHumanizedString()
+                                }
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Active</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => DeleteTaskInstance(taskInstance.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+
+@code {
+    [Parameter]
+    public int? TaskDefinitionId { get; set; }
+    [Parameter]
+    public bool? OnlyShowActive { get; set; }
+
+    private List<TaskInstance>? taskInstances;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+        await LoadTaskInstances();
+    }
+
+    private async Task LoadTaskInstances()
+    {
+        taskInstances = (await TaskInstanceService.GetAsync())
+            .Where(t => !TaskDefinitionId.HasValue || (t.TaskDefinitionId == TaskDefinitionId))
+            .Where(t => !OnlyShowActive.HasValue || OnlyShowActive == false || (OnlyShowActive == true && t.CompletedOn == null))
+            .ToList();
+        
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteTaskInstance(int id)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await TaskInstanceService.DeleteAsync(id);
+            await LoadTaskInstances();
+        }
+    }
+
+    private async Task StopTaskInstance(TaskInstance taskInstance)
+    {
+        // prompt user for notes
+        string notes = await JsRuntime.InvokeAsync<string>("prompt", "Notes:");
+        taskInstance.CompletedOn = DateTimeOffset.UtcNow;
+        taskInstance.Notes = notes;
+        await TaskInstanceService.UpdateAsync(taskInstance);
+        await LoadTaskInstances();
+    }
+}

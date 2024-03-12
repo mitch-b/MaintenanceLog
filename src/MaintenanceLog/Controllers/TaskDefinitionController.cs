@@ -1,18 +1,24 @@
 ﻿using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaintenanceLog.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/task-definitions")]
     public class TaskDefinitionController: ControllerBase
     {
         private readonly ITaskDefinitionService _taskDefinitionService;
+        private readonly ITaskInstanceService _taskInstanceService;
+
         public TaskDefinitionController(
-            ITaskDefinitionService taskDefinitionService)
+            ITaskDefinitionService taskDefinitionService,
+            ITaskInstanceService taskInstanceService)
         {
             _taskDefinitionService = taskDefinitionService;
+            _taskInstanceService = taskInstanceService;
         }
 
         [HttpGet]
@@ -46,6 +52,13 @@ namespace MaintenanceLog.Controllers
         {
             await _taskDefinitionService.DeleteAsync(id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{id}/task-instances")]
+        public async Task<ActionResult<TaskInstance>> GetTaskInstances(int id)
+        {
+            return Ok(await _taskInstanceService.GetByTaskDefinitionAsync(id));
         }
     }
 }

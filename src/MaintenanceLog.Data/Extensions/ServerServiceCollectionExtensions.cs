@@ -1,8 +1,10 @@
-﻿using MaintenanceLog.Data.Services.Contracts;
+﻿using MaintenanceLog.Common.Models.Configuration;
+using MaintenanceLog.Common.Services;
+using MaintenanceLog.Data.Services.Contracts;
 using MaintenanceLog.Data.Services.Server;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace MaintenanceLog.Data.Extensions
 {
@@ -10,13 +12,18 @@ namespace MaintenanceLog.Data.Extensions
     {
         public static IServiceCollection AddMaintenanceLogDataServices(this IServiceCollection services)
         {
-            var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
-            var connectionString = configuration?.GetConnectionString("MaintenanceLogDb")
-                ?? throw new InvalidOperationException("Connection string 'MaintenanceLogDb' not found.");
+            using var localServiceProvider = services.BuildServiceProvider();
+
+            var maintenanceLogSettingsOptions = localServiceProvider.GetService<IOptions<MaintenanceLogSettings>>();
+            var maintenanceLogSettings = maintenanceLogSettingsOptions?.Value
+                ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
+            var databaseConfigurationService = localServiceProvider.GetService<IDatabaseConfigurationService>();
+
+            var connectionString = databaseConfigurationService?.GetConnectionString()
+                ?? throw new InvalidOperationException("Connection string not found.");
 
             // check if Settings.DbProvider is MSSQL
-            var dbProvider = configuration?.GetSection("DbProvider").Value;
-            if (string.Equals(dbProvider, "MSSQL", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(maintenanceLogSettings!.Database.DbProvider, "MSSQL", StringComparison.OrdinalIgnoreCase))
             {
                 services.AddDbContextFactory<ApplicationDbContext>(options =>
                     options.UseSqlServer(connectionString, providerOptions => { 
@@ -24,7 +31,7 @@ namespace MaintenanceLog.Data.Extensions
                         providerOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
                     }));
             }
-            else if (string.Equals(dbProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(maintenanceLogSettings!.Database.DbProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
             {
                 services.AddDbContextFactory<ApplicationDbContext>(options =>
                     options.UseSqlite(connectionString, providerOptions =>
@@ -32,14 +39,10 @@ namespace MaintenanceLog.Data.Extensions
                         providerOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
                     }));
             }
-            else
-            {
-                throw new InvalidOperationException("Invalid database provider.");
-            }
 
             services.AddScoped(http => new HttpClient
             {
-                BaseAddress = new Uri(configuration!.GetSection("BaseUri")!.Value!)
+                BaseAddress = new Uri(maintenanceLogSettings.BaseUri)
             });
 
             services.AddScoped<IPropertyService, PropertyService>();
@@ -47,6 +50,7 @@ namespace MaintenanceLog.Data.Extensions
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<ITaskTypeService, TaskTypeService>();
             services.AddScoped<ITaskDefinitionService, TaskDefinitionService>();
+            services.AddScoped<ITaskInstanceService, TaskInstanceService>();
 
             return services;
         }

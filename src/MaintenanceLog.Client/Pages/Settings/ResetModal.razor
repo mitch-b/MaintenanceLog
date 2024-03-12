@@ -179,11 +179,15 @@
                 await TaskTypeService.DeleteAsync(taskType);
             }
 
-
             // Add missing task types, only delete the non-default ones. 
             // If any task definitions are using a non-default task type, set them to the default task type.
 
             taskTypes = await TaskTypeService.GetAsync();
+
+            foreach (var newTaskType in defaultTaskTypes.Where(dtt => !taskTypes.Any(tt => tt.Name == dtt.Name)))
+            {
+                await TaskTypeService.AddAsync(newTaskType);
+            }
 
             if (!resetTaskDefinitions)
             {
@@ -194,11 +198,6 @@
                     taskDefinition.TaskTypeId = defaultTaskType.Id;
                     await TaskDefinitionService.UpdateAsync(taskDefinition);
                 }
-            }
-
-            foreach (var newTaskType in defaultTaskTypes.Where(dtt => !taskTypes.Any(tt => tt.Name == dtt.Name)))
-            {
-                await TaskTypeService.AddAsync(newTaskType);
             }
         }
 

@@ -1,22 +1,27 @@
 ﻿using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaintenanceLog.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/task-types")]
     public class TaskTypeController: ControllerBase
     {
         private readonly ITaskTypeService _taskTypeService;
         private readonly ITaskDefinitionService _taskDefinitionService;
+        private readonly ITaskInstanceService _taskInstanceService;
 
         public TaskTypeController(
             ITaskTypeService taskTypeService,
-            ITaskDefinitionService taskDefinitionService)
+            ITaskDefinitionService taskDefinitionService,
+            ITaskInstanceService taskInstanceService)
         {
             _taskTypeService = taskTypeService;
             _taskDefinitionService = taskDefinitionService;
+            _taskInstanceService = taskInstanceService;
         }
 
         [HttpGet]
@@ -57,6 +62,13 @@ namespace MaintenanceLog.Controllers
         public async Task<ActionResult<Asset>> GetTaskDefinitions(int id)
         {
             return Ok(await _taskDefinitionService.GetByTaskTypeAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{id}/task-instances")]
+        public async Task<ActionResult<TaskInstance>> GetTaskInstances(int id)
+        {
+            return Ok(await _taskInstanceService.GetByTaskTypeAsync(id));
         }
     }
 }

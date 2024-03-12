@@ -4,10 +4,14 @@ using MaintenanceLog.Components.Account;
 using MaintenanceLog.Data;
 using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Extensions;
-using MaintenanceLog.Services;
+using MaintenanceLog.Extensions;
+using MaintenanceLog.Common.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MaintenanceLog.Common.Models.Configuration;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,33 +45,38 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services
-    .AddFluentEmail(builder.Configuration.GetValue<string>("EmailConfig:SmtpFrom"))
-    .AddSmtpSender(
-        builder.Configuration.GetValue<string?>("EmailConfig:SmtpHost"), 
-        builder.Configuration.GetValue<int?>("EmailConfig:SmtpPort") ?? 587,
-        builder.Configuration.GetValue<string?>("EmailConfig:SmtpUser"),
-        builder.Configuration.GetValue<string?>("EmailConfig:SmtpPass"));
-
+builder.Services.AddMaintenanceLogServices();
+builder.Services.AddMaintenanceLogCommonServices(builder.Configuration);
 builder.Services.AddMaintenanceLogDataServices();
-builder.Services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
+
+// get the MaintenanceLogSettings from the Common project using the builder.Services create scope
+using (var serviceProvider = builder.Services.BuildServiceProvider())
+{
+    var maintenanceLogSettingsOptions = serviceProvider.GetService<IOptions<MaintenanceLogSettings>>()
+        ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
+    var maintenanceLogSettings = maintenanceLogSettingsOptions.Value;
+    
+    Console.WriteLine($"MaintenanceLogSettings: {JsonSerializer.Serialize(maintenanceLogSettings)}");
+    
+    var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig.SmtpFrom) 
+        ? null 
+        : maintenanceLogSettings.EmailConfig.SmtpFrom;
+    builder.Services
+        .AddFluentEmail(fromAddress)
+        .AddSmtpSender(
+            maintenanceLogSettings.EmailConfig.SmtpHost, 
+            maintenanceLogSettings.EmailConfig.SmtpPort ?? 587,
+            maintenanceLogSettings.EmailConfig.SmtpUser,
+            maintenanceLogSettings.EmailConfig.SmtpPass);
+}
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
-
-    // This section sets up and seeds the database. Seeding is NOT normally
-    // handled this way in production. The following approach is used in this
-    // sample app to make the sample simpler. The app can be cloned. The
-    // connection string is configured. The app can be run.
-    await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
-    var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
-    await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
 }
 else
 {
@@ -76,6 +85,12 @@ else
     app.UseHsts();
     app.UseHttpsRedirection();
 }
+
+// This section sets up and seeds the database. Seeding is NOT normally
+// handled this way in production. 
+await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
+await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
 
 app.MapControllers();
 

@@ -11,4 +11,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MaintenanceLog.Common\MaintenanceLog.Common.csproj" />
+  </ItemGroup>
+
 </Project>
