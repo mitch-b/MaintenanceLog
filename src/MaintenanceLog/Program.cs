@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceLog.Common.Models.Configuration;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddMaintenanceLogServices();
 builder.Services.AddMaintenanceLogCommonServices(builder.Configuration);

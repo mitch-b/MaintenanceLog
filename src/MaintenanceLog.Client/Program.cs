@@ -1,4 +1,5 @@
 ﻿using Blazor.QrCodeGen;
+using Blazored.LocalStorage;
 using MaintenanceLog.Client;
 using MaintenanceLog.Common.Extensions;
 using MaintenanceLog.Data.Extensions;
@@ -11,7 +12,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
-
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped(http => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddMaintenanceLogCommonServices(builder.Configuration);
