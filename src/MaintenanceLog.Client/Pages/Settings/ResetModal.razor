@@ -12,6 +12,7 @@
 @inject IPropertyService PropertyService
 @inject ITaskTypeService TaskTypeService
 @inject ITaskDefinitionService TaskDefinitionService
+@inject ITaskInstanceService TaskInstanceService
 
 <button class="btn btn-danger" @onclick="OpenModal">
     Reset Settings
@@ -37,7 +38,10 @@
             <label for="setting3"> Assets</label><br>
 
             <input type="checkbox" @bind="resetTaskDefinitions">
-            <label for="setting2"> Tasks</label><br>
+            <label for="setting2"> Task Definitions</label><br>
+
+            <input type="checkbox" @bind="resetTaskInstances">
+            <label for="setting6"> Tasks</label><br>
 
             <button class="btn btn-danger" @onclick="ResetSettings">
                 Reset
@@ -91,10 +95,11 @@
 
     private bool isModalOpen = false;
     private bool resetTaskTypes = false;
-    private bool resetTaskDefinitions = false;
+    private bool resetTaskInstances = false;
     private bool _resetAssets = false;
     private bool _resetAreas = false;
     private bool _resetProperties = false;
+    private bool _resetTaskDefinitions = false;
 
     bool resetProperties
     {
@@ -138,6 +143,19 @@
         }
     }
 
+    bool resetTaskDefinitions
+    {
+        get => _resetTaskDefinitions;
+        set
+        {
+            _resetTaskDefinitions = value;
+            if (value)
+            {
+                resetTaskInstances = true;
+            }
+        }
+    }
+
     void OpenModal()
     {
         isModalOpen = true;
@@ -150,13 +168,30 @@
 
     private async Task ResetSettings()
     {
+        
         if (resetTaskDefinitions)
         {
-            // Reset tasks
+            // must clear task instances first
+            var taskInstances = await TaskInstanceService.GetAsync();
+            foreach (var taskInstance in taskInstances)
+            {
+                await TaskInstanceService.DeleteAsync(taskInstance);
+            }
+
+            // Reset task definitions
             var taskDefinitions = await TaskDefinitionService.GetAsync();
             foreach (var taskDefinition in taskDefinitions)
             {
                 await TaskDefinitionService.DeleteAsync(taskDefinition);
+            }
+        }
+        else if (resetTaskInstances)
+        {
+            // Reset task instances
+            var taskInstances = await TaskInstanceService.GetAsync();
+            foreach (var taskInstance in taskInstances)
+            {
+                await TaskInstanceService.DeleteAsync(taskInstance);
             }
         }
 
