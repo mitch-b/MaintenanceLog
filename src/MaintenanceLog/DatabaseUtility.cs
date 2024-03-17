@@ -1,11 +1,13 @@
-﻿using MaintenanceLog.Data;
+﻿using System.Threading;
+using MaintenanceLog.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MaintenanceLog;
 
 public static class DatabaseUtility
 {
-    public static async Task EnsureDbCreatedAndSeedWithDefaults(DbContextOptions<ApplicationDbContext> options)
+    public static async Task EnsureDbCreatedAndSeedWithDefaults(DbContextOptions<ApplicationDbContext> options, IMigrator migrator)
     {
         var factory = new LoggerFactory();
         var builder = new DbContextOptionsBuilder<ApplicationDbContext>(options)
@@ -20,11 +22,23 @@ public static class DatabaseUtility
 
         try
         {
-            if ((await context.Database.GetPendingMigrationsAsync()).Any())
+            // not good with distributed UI... but for now...
+            Console.WriteLine("Applying migrations...");
+            var migrations = await context.Database.GetPendingMigrationsAsync();
+            foreach (var migration in migrations)
             {
-                // not good with distributed UI... but for now...
-                Console.WriteLine("Applying migrations...");
-                await context.Database.MigrateAsync();
+                // Execute all migrations in one single transaction
+                using var tran = await context.Database.BeginTransactionAsync();
+                try
+                {
+                    await migrator.MigrateAsync(migration);
+                    await tran.CommitAsync();
+                }
+                catch (Exception exc)
+                {
+                    await tran.RollbackAsync();
+                    throw new Exception($"Error while applying db migration '{migration}'.", exc);
+                }
             }
         }
         catch (Exception ex)

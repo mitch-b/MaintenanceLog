@@ -13,6 +13,7 @@ using MaintenanceLog.Common.Models.Configuration;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Blazored.LocalStorage;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,7 +94,8 @@ else
 // handled this way in production. 
 await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
 var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
-await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
+var migrator = scope.ServiceProvider.GetService<IMigrator>();
+await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options, migrator);
 
 app.MapControllers();
 
