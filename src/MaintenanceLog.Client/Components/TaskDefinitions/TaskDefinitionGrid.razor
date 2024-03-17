@@ -54,6 +54,8 @@ else
     public int? AreaId { get; set; }
     [Parameter]
     public int? AssetId { get; set; }
+    [Parameter]
+    public EventCallback<bool> OnDataUpdated { get; set; }
 
     private List<TaskDefinition>? taskDefinitions;
 
@@ -85,6 +87,10 @@ else
         {
             await TaskDefinitionService.DeleteAsync(id);
             await LoadTaskDefinitions();
+            if (OnDataUpdated.HasDelegate)
+            {
+                await OnDataUpdated.InvokeAsync(true);
+            }
         }
     }
 
@@ -98,5 +104,9 @@ else
             // Status = TaskInstanceStatus.InProgress
         };
         await TaskInstanceService.AddAsync(taskInstance);
+        if (OnDataUpdated.HasDelegate)
+        {
+            await OnDataUpdated.InvokeAsync(true);
+        }
     }
 }

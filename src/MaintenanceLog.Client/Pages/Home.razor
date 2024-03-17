@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using MaintenanceLog.Client.Components.TaskDefinitions
 @using MaintenanceLog.Client.Components.TaskInstances
 
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
@@ -18,17 +19,30 @@
         <h2 class="pt-4">Tasks</h2>
         <input type="checkbox" @bind="onlyActive" /> Only Active
 
-        <TaskInstanceGrid OnlyShowActive="@onlyActive" />
+        <TaskInstanceGrid OnlyShowActive="@onlyActive" @ref="taskInstanceGrid" />
+
+        <h2 class="pt-4">Definitions</h2>
+        <TaskDefinitionGrid OnDataUpdated="OnTaskDefinitionsUpdated"/>
     </Authorized>
 </AuthorizeView>
 
 @code
 {
     private bool? onlyActive = true;
+    TaskInstanceGrid? taskInstanceGrid;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         //onlyActive = await LocalStorage.GetItemAsync<bool?>(nameof(onlyActive));
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task OnTaskDefinitionsUpdated(bool updated)
+    {
+        if (taskInstanceGrid is not null)
+        {
+            // may be a better way than component reference here
+            await taskInstanceGrid.LoadTaskInstances();
+        }
     }
 }
