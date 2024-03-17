@@ -42,8 +42,8 @@ namespace MaintenanceLog.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CompletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CompletedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    TaskInstanceId = table.Column<int>(type: "int", nullable: false),
-                    TaskDefinitionStepId = table.Column<int>(type: "int", nullable: false),
+                    TaskInstanceId = table.Column<int>(type: "int", nullable: true),
+                    TaskDefinitionStepId = table.Column<int>(type: "int", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false, defaultValueSql: "GETUTCDATE()")
@@ -60,14 +60,12 @@ namespace MaintenanceLog.Data.Migrations
                         name: "FK_TaskInstanceSteps_TaskDefinitionSteps_TaskDefinitionStepId",
                         column: x => x.TaskDefinitionStepId,
                         principalTable: "TaskDefinitionSteps",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TaskInstanceSteps_TaskInstances_TaskInstanceId",
                         column: x => x.TaskInstanceId,
                         principalTable: "TaskInstances",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

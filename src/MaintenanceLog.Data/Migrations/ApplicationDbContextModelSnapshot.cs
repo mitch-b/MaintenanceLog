@@ -393,10 +393,10 @@ namespace MaintenanceLog.Data.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<int>("TaskDefinitionStepId")
+                    b.Property<int?>("TaskDefinitionStepId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TaskInstanceId")
+                    b.Property<int?>("TaskInstanceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -663,15 +663,11 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasOne("MaintenanceLog.Data.Entities.TaskDefinitionStep", "TaskDefinitionStep")
                         .WithMany()
-                        .HasForeignKey("TaskDefinitionStepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaskDefinitionStepId");
 
                     b.HasOne("MaintenanceLog.Data.Entities.TaskInstance", "TaskInstance")
                         .WithMany("TaskInstanceSteps")
-                        .HasForeignKey("TaskInstanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaskInstanceId");
 
                     b.Navigation("CompletedBy");
 

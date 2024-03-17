@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceLog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240317163858_Steps")]
+    [Migration("20240317205441_Steps")]
     partial class Steps
     {
         /// <inheritdoc />
@@ -396,10 +396,10 @@ namespace MaintenanceLog.Data.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<int>("TaskDefinitionStepId")
+                    b.Property<int?>("TaskDefinitionStepId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TaskInstanceId")
+                    b.Property<int?>("TaskInstanceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -629,7 +629,7 @@ namespace MaintenanceLog.Data.Migrations
             modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskDefinitionStep", b =>
                 {
                     b.HasOne("MaintenanceLog.Data.Entities.TaskDefinition", "TaskDefinition")
-                        .WithMany()
+                        .WithMany("TaskDefinitionSteps")
                         .HasForeignKey("TaskDefinitionId");
 
                     b.Navigation("TaskDefinition");
@@ -666,15 +666,11 @@ namespace MaintenanceLog.Data.Migrations
 
                     b.HasOne("MaintenanceLog.Data.Entities.TaskDefinitionStep", "TaskDefinitionStep")
                         .WithMany()
-                        .HasForeignKey("TaskDefinitionStepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaskDefinitionStepId");
 
                     b.HasOne("MaintenanceLog.Data.Entities.TaskInstance", "TaskInstance")
-                        .WithMany()
-                        .HasForeignKey("TaskInstanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("TaskInstanceSteps")
+                        .HasForeignKey("TaskInstanceId");
 
                     b.Navigation("CompletedBy");
 
@@ -737,6 +733,16 @@ namespace MaintenanceLog.Data.Migrations
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Property", b =>
                 {
                     b.Navigation("Areas");
+                });
+
+            modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskDefinition", b =>
+                {
+                    b.Navigation("TaskDefinitionSteps");
+                });
+
+            modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskInstance", b =>
+                {
+                    b.Navigation("TaskInstanceSteps");
                 });
 #pragma warning restore 612, 618
         }

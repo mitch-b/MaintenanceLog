@@ -9,6 +9,6 @@ public class TaskDefinitionStep : BaseEntity
 
     public bool? IsOptional { get; set; }
 
-    public int TaskDefinitionId { get; set; }
+    public int? TaskDefinitionId { get; set; }
     public TaskDefinition? TaskDefinition { get; set; }
 }

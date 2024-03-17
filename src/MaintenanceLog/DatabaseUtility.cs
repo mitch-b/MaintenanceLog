@@ -23,7 +23,7 @@ public static class DatabaseUtility
         try
         {
             // not good with distributed UI... but for now...
-            Console.WriteLine("Applying migrations...");
+
             var migrations = await context.Database.GetPendingMigrationsAsync();
             foreach (var migration in migrations)
             {
@@ -31,6 +31,7 @@ public static class DatabaseUtility
                 using var tran = await context.Database.BeginTransactionAsync();
                 try
                 {
+                    Console.WriteLine($"Applying migration '{migration}'...");
                     await migrator.MigrateAsync(migration);
                     await tran.CommitAsync();
                 }
