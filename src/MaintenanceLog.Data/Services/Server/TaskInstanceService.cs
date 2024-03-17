@@ -5,10 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace MaintenanceLog.Data.Services.Server
 {
-    public class TaskInstanceService(ILogger<TaskInstanceService> logger, IDbContextFactory<ApplicationDbContext> contextFactory) : ITaskInstanceService
+    public class TaskInstanceService(
+        ILogger<TaskInstanceService> logger, 
+        IDbContextFactory<ApplicationDbContext> contextFactory, 
+        ITaskInstanceStepService taskInstanceStepService) : ITaskInstanceService
     {
         private readonly ILogger<TaskInstanceService> _logger = logger;
         private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
+        private readonly ITaskInstanceStepService _taskInstanceStepService = taskInstanceStepService;
 
         public async Task<TaskInstance> AddAsync(TaskInstance entity)
         {
@@ -16,6 +20,8 @@ namespace MaintenanceLog.Data.Services.Server
             _logger.LogDebug($"Adding Task instance: {entity}");
             var result = await context.TaskInstances!.AddAsync(entity);
             await context.SaveChangesAsync();
+            // ensure steps are created for the task instance (if applicable)
+            await _taskInstanceStepService.CreateFromTaskDefinitionAsync(result.Entity.Id, entity.TaskDefinitionId);
             return result.Entity;
         }
 

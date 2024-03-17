@@ -1,10 +1,13 @@
 ﻿@using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
 @using MaintenanceLog.Common.Extensions
+@using System.Security.Claims
 
 @inject IJSRuntime JsRuntime
 @inject ITaskDefinitionService TaskDefinitionService
 @inject ITaskInstanceService TaskInstanceService
+@inject ITaskInstanceStepService TaskInstanceStepService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
 <!-- Task Instances Table -->
@@ -57,11 +60,13 @@
                                         @if (step.CompletedOn.HasValue)
                                         {
                                             <s>
+                                                <input type="checkbox" @onchange="() => HandleInstanceStepCheckboxChanged(step)" checked="@step.CompletedOn.HasValue" />
                                                 @step.TaskDefinitionStep!.Name
                                             </s>
                                         }
                                         else
                                         {
+                                            <input type="checkbox" @onchange="() => HandleInstanceStepCheckboxChanged(step)" checked="@step.CompletedOn.HasValue" />
                                             @step.TaskDefinitionStep!.Name
                                         }
                                     </li>
@@ -108,11 +113,13 @@ else
     public int? TaskDefinitionId { get; set; }
     [Parameter]
     public bool? OnlyShowActive { get; set; }
+    private string? _userId;
 
     private List<TaskInstance>? taskInstances;
 
     protected override async Task OnInitializedAsync()
     {
+        await GetClaimsPrincipalData();
         await base.OnInitializedAsync();
     }
 
@@ -120,6 +127,12 @@ else
     {
         await base.SetParametersAsync(parameters);
         await LoadTaskInstances();
+    }
+    private async Task GetClaimsPrincipalData()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     private async Task LoadTaskInstances()
@@ -150,5 +163,30 @@ else
         taskInstance.Notes = notes;
         await TaskInstanceService.UpdateAsync(taskInstance);
         await LoadTaskInstances();
+    }
+
+    private async Task HandleInstanceStepCheckboxChanged(TaskInstanceStep taskInstanceStep)
+    {
+        if (taskInstanceStep.CompletedOn.HasValue)
+        {
+            await UnCheckInstanceStep(taskInstanceStep);
+        }
+        else
+        {
+            await CheckOffInstanceStep(taskInstanceStep);
+        }
+        await LoadTaskInstances();
+    }
+
+    private async Task CheckOffInstanceStep(TaskInstanceStep taskInstanceStep)
+    {
+        taskInstanceStep.CompletedOn = DateTimeOffset.UtcNow;
+        await TaskInstanceStepService.UpdateAsync(taskInstanceStep);
+    }
+
+    private async Task UnCheckInstanceStep(TaskInstanceStep taskInstanceStep)
+    {
+        taskInstanceStep.CompletedOn = null!;
+        await TaskInstanceStepService.UpdateAsync(taskInstanceStep);
     }
 }
