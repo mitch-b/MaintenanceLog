@@ -13,8 +13,9 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Start</th>
+                <th></th>
                 <th>Name</th>
+                <th>Steps</th>
                 <th>Asset</th>
                 <th>Area</th>
                 <th>Completed On</th>
@@ -29,14 +30,45 @@
                     <td>
                         @if (taskInstance.CompletedOn is null)
                         {
-                        <button class="btn btn-danger" title="Stop" @onclick="() => StopTaskInstance(taskInstance)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-stop" viewBox="0 0 16 16">
-                                <path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5z"/>
-                            </svg>
-                        </button>
+                            <button class="btn btn-danger" title="Stop" @onclick="() => StopTaskInstance(taskInstance)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-stop" viewBox="0 0 16 16">
+                                    <path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5z" />
+                                </svg>
+                            </button>
                         }
                     </td>
                     <td>@taskInstance.TaskDefinition!.Name</td>
+                    <td>
+                        @if (@taskInstance.TaskInstanceSteps?.Count > 0)
+                        {
+                            var completedSteps = taskInstance.TaskInstanceSteps.Where(s => s.CompletedOn.HasValue).Count();
+                            if (completedSteps == taskInstance.TaskInstanceSteps.Count || taskInstance.CompletedOn.HasValue)
+                            {
+                                <span class="badge bg-success">@completedSteps / @taskInstance.TaskInstanceSteps.Count</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info">@completedSteps / @taskInstance.TaskInstanceSteps.Count</span>
+                            }
+                            <ul>
+                                @foreach (var step in taskInstance.TaskInstanceSteps)
+                                {
+                                    <li>
+                                        @if (step.CompletedOn.HasValue)
+                                        {
+                                            <s>
+                                                @step.TaskDefinitionStep!.Name
+                                            </s>
+                                        }
+                                        else
+                                        {
+                                            @step.TaskDefinitionStep!.Name
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </td>
                     <td>@taskInstance.TaskDefinition!.Asset?.Name</td>
                     <td>@taskInstance.TaskDefinition!.Area?.Name</td>
                     <td>
@@ -96,7 +128,7 @@ else
             .Where(t => !TaskDefinitionId.HasValue || (t.TaskDefinitionId == TaskDefinitionId))
             .Where(t => !OnlyShowActive.HasValue || OnlyShowActive == false || (OnlyShowActive == true && t.CompletedOn == null))
             .ToList();
-        
+
         await InvokeAsync(StateHasChanged);
     }
 
