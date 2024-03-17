@@ -136,7 +136,7 @@ else
         _userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
-    private async Task LoadTaskInstances()
+    public async Task LoadTaskInstances()
     {
         taskInstances = (await TaskInstanceService.GetAsync())
             .Where(t => !TaskDefinitionId.HasValue || (t.TaskDefinitionId == TaskDefinitionId))
