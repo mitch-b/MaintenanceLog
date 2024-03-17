@@ -128,6 +128,7 @@ else
         await base.SetParametersAsync(parameters);
         await LoadTaskInstances();
     }
+
     private async Task GetClaimsPrincipalData()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

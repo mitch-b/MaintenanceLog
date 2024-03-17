@@ -16,22 +16,19 @@
         Hello @context.User.Identity?.Name!
 
         <h2 class="pt-4">Tasks</h2>
-        <input type="checkbox" @bind-value="onlyActive" @bind-value:after="OnOnlyActiveChanged" /> Only Active
-        <TaskInstanceGrid OnlyShowActive="onlyActive" />
+        <input type="checkbox" @bind="onlyActive" /> Only Active
+
+        <TaskInstanceGrid OnlyShowActive="@onlyActive" />
     </Authorized>
 </AuthorizeView>
 
 @code
 {
-    private bool? onlyActive = false;
+    private bool? onlyActive = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //onlyActive = await LocalStorage.GetItemAsync<bool?>("onlyActive");
-    }
-
-    private async Task OnOnlyActiveChanged()
-    {
-        //await LocalStorage.SetItemAsync("onlyActive", onlyActive);
+        //onlyActive = await LocalStorage.GetItemAsync<bool?>(nameof(onlyActive));
+        await base.OnAfterRenderAsync(firstRender);
     }
 }
