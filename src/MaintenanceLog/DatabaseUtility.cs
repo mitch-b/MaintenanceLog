@@ -23,24 +23,7 @@ public static class DatabaseUtility
         try
         {
             // not good with distributed UI... but for now...
-
-            var migrations = await context.Database.GetPendingMigrationsAsync();
-            foreach (var migration in migrations)
-            {
-                // Execute all migrations in one single transaction
-                using var tran = await context.Database.BeginTransactionAsync();
-                try
-                {
-                    Console.WriteLine($"Applying migration '{migration}'...");
-                    await migrator.MigrateAsync(migration);
-                    await tran.CommitAsync();
-                }
-                catch (Exception exc)
-                {
-                    await tran.RollbackAsync();
-                    throw new Exception($"Error while applying db migration '{migration}'.", exc);
-                }
-            }
+            await context.Database.MigrateAsync();
         }
         catch (Exception ex)
         {
