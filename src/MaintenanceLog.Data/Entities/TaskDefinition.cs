@@ -17,4 +17,6 @@ public class TaskDefinition : BaseEntity
     public Area? Area { get; set; }
 
     public ApplicationUser? CreatedBy { get; set; } = null!;
+
+    public ICollection<TaskDefinitionStep>? TaskDefinitionSteps { get; set; }
 }
