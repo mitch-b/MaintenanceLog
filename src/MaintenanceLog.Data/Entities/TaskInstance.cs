@@ -14,4 +14,6 @@ public class TaskInstance : BaseEntity
 
     public ApplicationUser? CreatedBy { get; set; } = null!;
     public ApplicationUser? AssignedTo { get; set; } = null!;
+
+    public ICollection<TaskInstanceStep>? TaskInstanceSteps { get; set; }
 }

@@ -4,6 +4,7 @@ using MaintenanceLog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceLog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240317163858_Steps")]
+    partial class Steps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -626,7 +629,7 @@ namespace MaintenanceLog.Data.Migrations
             modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskDefinitionStep", b =>
                 {
                     b.HasOne("MaintenanceLog.Data.Entities.TaskDefinition", "TaskDefinition")
-                        .WithMany("TaskDefinitionSteps")
+                        .WithMany()
                         .HasForeignKey("TaskDefinitionId");
 
                     b.Navigation("TaskDefinition");
@@ -668,7 +671,7 @@ namespace MaintenanceLog.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("MaintenanceLog.Data.Entities.TaskInstance", "TaskInstance")
-                        .WithMany("TaskInstanceSteps")
+                        .WithMany()
                         .HasForeignKey("TaskInstanceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -734,16 +737,6 @@ namespace MaintenanceLog.Data.Migrations
             modelBuilder.Entity("MaintenanceLog.Data.Entities.Property", b =>
                 {
                     b.Navigation("Areas");
-                });
-
-            modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskDefinition", b =>
-                {
-                    b.Navigation("TaskDefinitionSteps");
-                });
-
-            modelBuilder.Entity("MaintenanceLog.Data.Entities.TaskInstance", b =>
-                {
-                    b.Navigation("TaskInstanceSteps");
                 });
 #pragma warning restore 612, 618
         }

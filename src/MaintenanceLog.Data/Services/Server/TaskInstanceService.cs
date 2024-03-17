@@ -5,10 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace MaintenanceLog.Data.Services.Server
 {
-    public class TaskInstanceService(ILogger<TaskInstanceService> logger, IDbContextFactory<ApplicationDbContext> contextFactory) : ITaskInstanceService
+    public class TaskInstanceService(
+        ILogger<TaskInstanceService> logger, 
+        IDbContextFactory<ApplicationDbContext> contextFactory, 
+        ITaskInstanceStepService taskInstanceStepService) : ITaskInstanceService
     {
         private readonly ILogger<TaskInstanceService> _logger = logger;
         private readonly IDbContextFactory<ApplicationDbContext> _contextFactory = contextFactory;
+        private readonly ITaskInstanceStepService _taskInstanceStepService = taskInstanceStepService;
 
         public async Task<TaskInstance> AddAsync(TaskInstance entity)
         {
@@ -16,6 +20,8 @@ namespace MaintenanceLog.Data.Services.Server
             _logger.LogDebug($"Adding Task instance: {entity}");
             var result = await context.TaskInstances!.AddAsync(entity);
             await context.SaveChangesAsync();
+            // ensure steps are created for the task instance (if applicable)
+            await _taskInstanceStepService.CreateFromTaskDefinitionAsync(result.Entity.Id, entity.TaskDefinitionId);
             return result.Entity;
         }
 
@@ -46,6 +52,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .ToListAsync();
         }
 
@@ -59,6 +67,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .FirstOrDefaultAsync(td => td.Id == id);
         }
 
@@ -81,6 +91,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .Where(ti => !ti.Deleted)
                 .Where(ti => ti.TaskDefinition!.Area == null || ti.TaskDefinition.Area.PropertyId == propertyId)
                 .Where(ti => ti.TaskDefinition!.Asset == null || ti.TaskDefinition.Asset.Area!.PropertyId == propertyId)
@@ -97,6 +109,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .Where(ti => !ti.Deleted)
                 .Where(ti => ti.TaskDefinition != null && ti.TaskDefinition.AreaId == areaId)
                 .ToListAsync();
@@ -112,6 +126,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .Where(ti => !ti.Deleted)
                 .Where(ti => ti.TaskDefinition != null && ti.TaskDefinition.AssetId == assetId)
                 .ToListAsync();
@@ -127,6 +143,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .Where(ti => !ti.Deleted)
                 .Where(ti => ti.TaskDefinition != null && ti.TaskDefinition.TaskTypeId == taskTypeId)
                 .ToListAsync();
@@ -142,6 +160,8 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(td => td.TaskType)
                 .Include(ti => ti.TaskDefinition)
                 .ThenInclude(td => td.Area)
+                .Include(ti => ti.TaskInstanceSteps)
+                .ThenInclude(tis => tis.TaskDefinitionStep)
                 .Where(ti => !ti.Deleted)
                 .Where(ti => ti.TaskDefinition != null && ti.TaskDefinition.Id == taskDefinitionId)
                 .ToListAsync();

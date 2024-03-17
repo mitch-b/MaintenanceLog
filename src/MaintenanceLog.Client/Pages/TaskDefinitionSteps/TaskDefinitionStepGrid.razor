@@ -1,0 +1,66 @@
+﻿@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Services.Contracts
+
+@inject IJSRuntime JsRuntime
+@inject ITaskDefinitionStepService TaskDefinitionStepService
+
+<!-- Task Definition Steps Table -->
+@if (taskDefinitionSteps != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Is Optional</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var step in taskDefinitionSteps)
+            {
+                <tr>
+                    <td>@step.Name</td>
+                    <td>@step.IsOptional</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => DeleteTaskDefinitionStep(step.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <AddTaskDefinitionStepModal TaskDefinitionId="TaskDefinitionId" />
+}
+
+
+@code {
+    [Parameter]
+    public int TaskDefinitionId { get; set; }
+
+    private List<TaskDefinitionStep>? taskDefinitionSteps;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadTaskDefinitionSteps();
+    }
+
+    private async Task LoadTaskDefinitionSteps()
+    {
+        taskDefinitionSteps = (await TaskDefinitionStepService.GetAsync())
+            .Where(t => t.TaskDefinitionId == TaskDefinitionId)
+            .ToList();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteTaskDefinitionStep(int id)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await TaskDefinitionStepService.DeleteAsync(id);
+            await LoadTaskDefinitionSteps();
+        }
+    }
+}

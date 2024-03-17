@@ -34,7 +34,6 @@
     * **`TaskType`**
     * **`Asset`(s)**
     * Task name
-    * Task system-name (kebab-name but overridable)
 * (Phase1) `TaskInstance`
   * An instance of a **`TaskDefinition`**.
   * Can be auto-generated when a required lifespan hits.
@@ -49,6 +48,21 @@
     * Duration (Self-Recorded)
     * DueByDate
     * MQTT-enabled (can be _Phase4_)
+* (Phase2) `TaskDefinitionSteps`
+  * _ie, for 'Clean Room', steps may be 'Organize books', 'Clear dresser', 'Hang clothes', etc. ..._
+  * `TaskDefinitionStep`s are associated under **`TaskDefinition`s**
+  * Each `TaskInstance` will have its own set of `TaskDefinitionStep`s to track progress.
+  * Properties:
+    * **`TaskDefinition`**
+    * Task Definition Step name
+    * IsOptional
+* (Phase2) `TaskInstanceStep`
+  * `TaskInstanceStep`s are associated under **`TaskInstance`s** and created from **`TaskDefinitionStep`s**
+  * Properties:
+    * **`TaskInstance`**
+    * **`TaskDefinitionStep`**
+    * CompletedOn
+    * CompletedBy (User)
 * (Phase2) `Part`
   * Parts contain `PurchasedPart`s
   * Properties:

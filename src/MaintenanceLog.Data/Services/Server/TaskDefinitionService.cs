@@ -43,6 +43,7 @@ namespace MaintenanceLog.Data.Services.Server
                 .Include(td => td.Asset)
                 .Include(td => td.Area)
                 .Include(td => td.TaskType)
+                .Include(td => td.TaskDefinitionSteps)
                 .ToListAsync();
         }
 
@@ -53,6 +54,7 @@ namespace MaintenanceLog.Data.Services.Server
                 .Include(td => td.Asset)
                 .Include(td => td.Area)
                 .Include(td => td.TaskType)
+                .Include(td => td.TaskDefinitionSteps)
                 .FirstOrDefaultAsync(td => td.Id == id);
         }
 
@@ -73,6 +75,7 @@ namespace MaintenanceLog.Data.Services.Server
                 .ThenInclude(a => a.Area)
                 .ThenInclude(a => a.Property)
                 .Include(td => td.TaskType)
+                .Include(td => td.TaskDefinitionSteps)
                 .Where(td => !td.Deleted)
                 .Where(td => td.Asset!.Area != null && td.Asset.Area.PropertyId == propertyId)
                 .ToListAsync();
@@ -86,6 +89,7 @@ namespace MaintenanceLog.Data.Services.Server
                 .Include(td => td.Area)
                 .Include(td => td.TaskType)
                 .Where(td => !td.Deleted)
+                .Include(td => td.TaskDefinitionSteps)
                 .Where(td => td.Asset!.AreaId == areaId)
                 .ToListAsync();
         }
@@ -96,6 +100,7 @@ namespace MaintenanceLog.Data.Services.Server
             return await context.TaskDefinitions!
                 .Include(td => td.Asset)
                 .Include(td => td.TaskType)
+                .Include(td => td.TaskDefinitionSteps)
                 .Where(td => !td.Deleted)
                 .Where(td => td.AssetId == assetId)
                 .ToListAsync();
@@ -107,6 +112,7 @@ namespace MaintenanceLog.Data.Services.Server
             return await context.TaskDefinitions!
                 .Include(td => td.Asset)
                 .Include(td => td.TaskType)
+                .Include(td => td.TaskDefinitionSteps)
                 .Where(p => !p.Deleted)
                 .Where(p => p.TaskTypeId == taskTypeId)
                 .ToListAsync();

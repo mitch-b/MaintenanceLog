@@ -16,6 +16,8 @@ namespace MaintenanceLog.Data.Extensions
             services.AddScoped<ITaskTypeService, HttpTaskTypeService>();
             services.AddScoped<ITaskDefinitionService, HttpTaskDefinitionService>();
             services.AddScoped<ITaskInstanceService, HttpTaskInstanceService>();
+            services.AddScoped<ITaskDefinitionStepService, HttpTaskDefinitionStepService>();
+            services.AddScoped<ITaskInstanceStepService, HttpTaskInstanceStepService>();
             return services;
         }
     }

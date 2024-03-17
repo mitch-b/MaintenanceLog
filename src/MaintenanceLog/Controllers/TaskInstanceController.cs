@@ -11,10 +11,13 @@ namespace MaintenanceLog.Controllers
     public class TaskInstanceController: ControllerBase
     {
         private readonly ITaskInstanceService _taskInstanceService;
+        private readonly ITaskInstanceStepService _taskInstanceStepService;
         public TaskInstanceController(
-            ITaskInstanceService taskDefinitionService)
+            ITaskInstanceService taskDefinitionService, 
+            ITaskInstanceStepService taskInstanceStepService)
         {
             _taskInstanceService = taskDefinitionService;
+            _taskInstanceStepService = taskInstanceStepService;
         }
 
         [HttpGet]
@@ -48,6 +51,13 @@ namespace MaintenanceLog.Controllers
         {
             await _taskInstanceService.DeleteAsync(id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{id}/task-instance-steps")]
+        public async Task<ActionResult<IList<TaskInstanceStep>>> GetTaskInstanceSteps(int id)
+        {
+            return Ok(await _taskInstanceStepService.GetByTaskInstanceAsync(id));
         }
     }
 }

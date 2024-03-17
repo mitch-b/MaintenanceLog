@@ -16,6 +16,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<TaskType>? TaskTypes { get; set; }
     public DbSet<TaskDefinition>? TaskDefinitions { get; set; }
     public DbSet<TaskInstance>? TaskInstances { get; set; }
+    public DbSet<TaskDefinitionStep>? TaskDefinitionSteps { get; set; }
+    public DbSet<TaskInstanceStep>? TaskInstanceSteps { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
