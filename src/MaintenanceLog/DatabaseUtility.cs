@@ -15,10 +15,10 @@ public static class DatabaseUtility
 
         using var context = new ApplicationDbContext(builder.Options);
 
-        if (!await context.Database.EnsureCreatedAsync())
-        {
-            Console.WriteLine("Database already exists or was not otherwise created.");
-        }
+        //if (!await context.Database.EnsureCreatedAsync())
+        //{
+        //    Console.WriteLine("Database already exists or was not otherwise created.");
+        //}
 
         try
         {
