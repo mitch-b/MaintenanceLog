@@ -1,5 +1,6 @@
 ﻿@page "/task-definitions/edit/{TaskDefinitionId:int}"
 
+@using MaintenanceLog.Client.Pages.TaskDefinitionSteps
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
 @using Microsoft.AspNetCore.Authorization
@@ -67,6 +68,8 @@
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary">Save</button>
     </EditForm>
+
+    <TaskDefinitionStepGrid TaskDefinitionId="TaskDefinitionId" />
 }
 else
 {
