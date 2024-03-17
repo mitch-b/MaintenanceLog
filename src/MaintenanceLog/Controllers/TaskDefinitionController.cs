@@ -12,13 +12,19 @@ namespace MaintenanceLog.Controllers
     {
         private readonly ITaskDefinitionService _taskDefinitionService;
         private readonly ITaskInstanceService _taskInstanceService;
+        private readonly ITaskDefinitionStepService _taskDefinitionStepService;
+        private readonly ITaskInstanceStepService _taskInstanceStepService;
 
         public TaskDefinitionController(
             ITaskDefinitionService taskDefinitionService,
-            ITaskInstanceService taskInstanceService)
+            ITaskInstanceService taskInstanceService,
+            ITaskDefinitionStepService taskDefinitionStepService,
+            ITaskInstanceStepService taskInstanceStepService)
         {
             _taskDefinitionService = taskDefinitionService;
             _taskInstanceService = taskInstanceService;
+            _taskDefinitionStepService = taskDefinitionStepService;
+            _taskInstanceStepService = taskInstanceStepService;
         }
 
         [HttpGet]
@@ -59,6 +65,20 @@ namespace MaintenanceLog.Controllers
         public async Task<ActionResult<TaskInstance>> GetTaskInstances(int id)
         {
             return Ok(await _taskInstanceService.GetByTaskDefinitionAsync(id));
+        }
+
+        [HttpGet]
+        [Route("{id}/task-definition-steps")]
+        public async Task<ActionResult<TaskInstance>> GetTaskDefinitionSteps(int id)
+        {
+            return Ok(await _taskDefinitionStepService.GetByTaskDefinitionAsync(id));
+        }
+
+        [HttpPost]
+        [Route("{taskDefinitionId}/task-instances/{taskInstanceId}/task-instance-steps")]
+        public async Task<ActionResult<TaskDefinition>> AddTaskInstanceStepsFromTaskDefinitionSteps(int taskDefinitionId, int taskInstanceId)
+        {
+            return Ok(await _taskInstanceStepService.CreateFromTaskDefinitionAsync(taskInstanceId, taskDefinitionId));
         }
     }
 }
