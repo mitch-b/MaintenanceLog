@@ -13,7 +13,6 @@ using MaintenanceLog.Common.Models.Configuration;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Blazored.LocalStorage;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 

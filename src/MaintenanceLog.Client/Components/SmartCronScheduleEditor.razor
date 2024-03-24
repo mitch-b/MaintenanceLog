@@ -1,6 +1,8 @@
 ﻿@using MaintenanceLog.Common.Contracts
 @using MaintenanceLog.Data.Entities
 
+@inject ISmartScheduleService SmartScheduleService
+
 @typeparam TItem where TItem : IScheduledEntity
 
 @if (isLoading)
@@ -42,26 +44,23 @@ else
 
     private async Task OnSmartAssist()
     {
-        var prompts = new List<string>
-        {
-            $"Given typical situations, how frequently should \"{Item!.Name}\" happen? Please return your response as just a Cron expression.",
-            "Do not use any human language.",
-            "Assume a person's day starts at 9AM local time."
-        };
-        var prompt = string.Join(" ", prompts);
-
         isLoading = true;
 
-        // CronSchedule = await SmartAssistService.GetCronSchedule(ItemName);
-        Item.CronSchedule = "30 9 * * TUE";
-        
-        await Task.Delay(1500);
+        aiResultText = await SmartScheduleService.EstimateCronScheduleForItem(Item);
+        if (string.IsNullOrWhiteSpace(aiResultText) == false)
+        {
+            Item.CronSchedule = aiResultText;
+        }
+        else
+        {
+            // TODO: alert user via JSInterop that AI failed to respond
+            Item.CronSchedule = null;
+        }
 
         isLoading = false;
 
         await InvokeAsync(StateHasChanged);
         await DataChangedAsync.InvokeAsync(Item);
-
 
         return;
     }
