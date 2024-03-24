@@ -11,8 +11,10 @@ namespace MaintenanceLog.Data.Extensions
             {
                 throw new ArgumentNullException(nameof(taskDefinition));
             }
-            
-            if (CronExpression.TryParse(taskDefinition.CronSchedule, CronFormat.IncludeSeconds, out var cronExpression))
+
+            CronExpression? cronExpression = null;
+
+            if (CronExpression.TryParse(taskDefinition.CronSchedule, CronFormat.IncludeSeconds, out cronExpression) || CronExpression.TryParse(taskDefinition.CronSchedule, out cronExpression))
             {
                 var nextDueDate = cronExpression.GetNextOccurrence(lastCompletedDate ?? DateTimeOffset.UtcNow, TimeZoneInfo.Local);
                 return nextDueDate;
@@ -28,7 +30,9 @@ namespace MaintenanceLog.Data.Extensions
                 throw new ArgumentNullException(nameof(taskDefinition));
             }
 
-            if (CronExpression.TryParse(taskDefinition.CronSchedule, CronFormat.IncludeSeconds, out var cronExpression))
+            CronExpression? cronExpression = null;
+
+            if (CronExpression.TryParse(taskDefinition.CronSchedule, CronFormat.IncludeSeconds, out cronExpression) || CronExpression.TryParse(taskDefinition.CronSchedule, out cronExpression))
             {
                 var nextDueDates = cronExpression.GetOccurrences(lastCompletedDate ?? DateTimeOffset.UtcNow, untilDate, TimeZoneInfo.Local, fromInclusive: true, toInclusive: true);
                 return nextDueDates;

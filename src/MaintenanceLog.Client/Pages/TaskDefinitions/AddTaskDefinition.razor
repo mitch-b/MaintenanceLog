@@ -62,8 +62,46 @@
             </InputSelect>
         </div>
 
+        <!-- CronSchedule -->
+        <div class="form-group">
+            <label for="cronSchedule">Cron Schedule</label>
+            <div class="form-check form-switch">
+                <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="isAdvancedCron" /> Advanced Edit?
+            </div>
+
+            <!-- if toggle is checked, show InputText, otherwise, show AI powered editor -->
+            @if (isAdvancedCron)
+            {
+                <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
+            }
+            else
+            {
+                @* <CronScheduleEditor CronSchedule="@taskDefinition.CronSchedule" OnChange="@((cron) => taskDefinition.CronSchedule = cron)" /> *@
+            }
+
+            <div>
+                @try
+                {
+                    @if (@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule ?? "") is not null)
+                    {
+                        <small class="text-muted">@taskDefinition.Name will run <code>@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule, new CronExpressionDescriptor.Options { Verbose = true })</code></small>
+                    }
+                    else
+                    {
+                        <small class="text-danger">Invalid Cron Expression</small>
+                    }
+                }
+                catch (Exception ex)
+                {
+                    <small class="text-danger">Invalid Cron Expression: @ex.Message</small>
+                }
+            </div>
+        </div>
+
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Save</button>
+        <div class="pt-5">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
     </EditForm>
 }
 else
@@ -77,6 +115,8 @@ else
     private List<Asset>? assets;
     private List<Area>? areas;
     private List<TaskType>? taskTypes;
+
+    private bool isAdvancedCron = false;
 
     protected override async Task OnInitializedAsync()
     {
