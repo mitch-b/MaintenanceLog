@@ -48,9 +48,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddBlazoredLocalStorage();
 
-builder.Services.AddMaintenanceLogServices();
 builder.Services.AddMaintenanceLogCommonServices(builder.Configuration);
 builder.Services.AddMaintenanceLogDataServices();
+builder.Services.AddMaintenanceLogServices();
 
 // get the MaintenanceLogSettings from the Common project using the builder.Services create scope
 using (var serviceProvider = builder.Services.BuildServiceProvider())

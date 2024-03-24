@@ -22,11 +22,7 @@ namespace MaintenanceLog.Controllers
         [Route("estimate-cron-schedule")]
         public async Task<ActionResult<string?>> EstimateCronSchedule(EstimateCronScheduleRequest requestModel)
         {
-            if (requestModel.Item is null)
-            {
-                return BadRequest("Item is required");
-            }
-            return Ok(await _smartScheduleService.EstimateCronScheduleForItem(requestModel.Item, requestModel.Prompts));
+            return Ok(await _smartScheduleService.EstimateCronScheduleForItem(requestModel.ItemName, requestModel.OverridePrompts));
         }
     }
 }

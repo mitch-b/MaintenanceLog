@@ -1,4 +1,4 @@
-using MaintenanceLog.Common.Contracts;
+﻿using MaintenanceLog.Common.Contracts;
 
 namespace MaintenanceLog.Services;
 
@@ -6,11 +6,11 @@ public class OpenAISmartScheduleService(IOpenAIService openAIService) : ISmartSc
 {
     private readonly IOpenAIService _openAIService = openAIService;
 
-    public async Task<string?> EstimateCronScheduleForItem(IScheduledEntity scheduledEntity, string[]? prompts = null)
+    public async Task<string?> EstimateCronScheduleForItem(string? itemName, string[]? overridePrompts = null)
     {
-        prompts ??= 
+        var prompts = overridePrompts ?? 
         [
-            $"Given typical situations, how frequently should \"{scheduledEntity.Name}\" happen? Please return your response as just a Cron expression.",
+            $"Given typical situations, how frequently should \"{itemName}\" happen? Please return your response as just a Cron expression.",
             "Do not use any human language.",
             "Assume a person's day starts at 9AM local time."
         ];

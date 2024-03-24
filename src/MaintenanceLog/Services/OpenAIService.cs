@@ -1,4 +1,4 @@
-namespace MaintenanceLog.Services;
+﻿namespace MaintenanceLog.Services;
 
 public interface IOpenAIService
 {
@@ -19,10 +19,12 @@ public class OpenAIService : IOpenAIService
         var requestBody = new
         {
             model,
-            prompt,
+            messages = prompt.Select(p => new { role = "system", content = p }).ToArray(),
             temperature,
             max_tokens = maxTokens
         };
+
+        // look into https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
 
         var response = await _httpClient.PostAsJsonAsync("chat/completions", requestBody);
         response.EnsureSuccessStatusCode();

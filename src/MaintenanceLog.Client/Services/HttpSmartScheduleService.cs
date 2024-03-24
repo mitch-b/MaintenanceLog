@@ -1,6 +1,7 @@
-using MaintenanceLog.Common.Contracts;
+﻿using MaintenanceLog.Common.Contracts;
 using MaintenanceLog.Common.Models.Requests;
 using MaintenanceLog.Data.Entities;
+using MaintenanceLog.Data.Services.Client;
 
 namespace MaintenanceLog.Client.Services
 {
@@ -15,13 +16,13 @@ namespace MaintenanceLog.Client.Services
                 : response;
         }
 
-        public async Task<string?> EstimateCronScheduleForItem(IScheduledEntity scheduledEntity, string[]? prompts = null)
+        public async Task<string?> EstimateCronScheduleForItem(string? itemName, string[]? overridePrompts = null)
         {
             var response = await _httpClient.PostAsJsonAsync<EstimateCronScheduleRequest, string>("api/schedules/estimate-cron-schedule", 
                 new EstimateCronScheduleRequest
                 {
-                    Item = scheduledEntity,
-                    Prompts = prompts
+                    ItemName = itemName,
+                    OverridePrompts = overridePrompts
                 });
             return response is null 
                 ? throw new Exception("API did not return the estimated cron schedule") 

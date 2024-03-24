@@ -1,4 +1,4 @@
-namespace MaintenanceLog.Common.Models.Configuration
+﻿namespace MaintenanceLog.Common.Models.Configuration
 {
     public record MaintenanceLogSettings
     {

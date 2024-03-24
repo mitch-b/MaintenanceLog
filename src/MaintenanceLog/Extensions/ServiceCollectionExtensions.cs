@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using MaintenanceLog.Common.Contracts;
 using MaintenanceLog.Common.Models.Configuration;
 using MaintenanceLog.Data.Entities;
@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IEmailSender<ApplicationUser>, EmailSender>();
 
         // Add OpenAIClient to the service collection
-        var apiKey = services.BuildServiceProvider().GetRequiredService<IOptions<MaintenanceLogSettings>>().Value?.OpenAI?.ApiKey;
+        var apiKey = services.BuildServiceProvider().GetRequiredService<IOptions<MaintenanceLogSettings>>().Value?.OpenAI.ApiKey;
         services.AddHttpClient("OpenAI", c =>
         {
             c.BaseAddress = new Uri("https://api.openai.com/v1/");

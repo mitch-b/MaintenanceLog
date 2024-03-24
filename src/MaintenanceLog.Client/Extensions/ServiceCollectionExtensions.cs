@@ -1,4 +1,4 @@
-using Blazor.QrCodeGen;
+﻿using Blazor.QrCodeGen;
 using Blazored.LocalStorage;
 using MaintenanceLog.Client.Services;
 using MaintenanceLog.Common.Contracts;
@@ -12,7 +12,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMaintenanceLogClientServices(this IServiceCollection services, WebAssemblyHostBuilder hostBuilder)
     {
-        
         services.AddAuthorizationCore();
         services.AddCascadingAuthenticationState();
         services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
