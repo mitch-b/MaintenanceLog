@@ -69,31 +69,13 @@
                 <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="isAdvancedCron" /> Advanced Edit?
             </div>
 
-            <SmartCronScheduleEditor Item="taskDefinition" />
+            <SmartCronScheduleEditor Item="taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
 
             <!-- if toggle is checked, show InputText -->
             @if (isAdvancedCron)
             {
                 <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
             }
-
-            <div>
-                @try
-                {
-                    @if (@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule ?? "") is not null)
-                    {
-                        <small class="text-muted">@taskDefinition.Name will run <code>@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule)</code></small>
-                    }
-                    else
-                    {
-                        <small class="text-danger">Invalid Cron Expression</small>
-                    }
-                }
-                catch (Exception ex)
-                {
-                    <small class="text-danger">Invalid Cron Expression: @ex.Message</small>
-                }
-            </div>
         </div>
 
         <!-- Submit Button -->
@@ -136,5 +118,11 @@ else
         }
         await TaskDefinitionService.AddAsync(taskDefinition);
         NavigationManager.NavigateTo("/task-definitions");
+    }
+
+    private async Task OnDataChanged(TaskDefinition taskDefinition)
+    {
+        this.taskDefinition = taskDefinition;
+        await InvokeAsync(StateHasChanged);
     }
 }
