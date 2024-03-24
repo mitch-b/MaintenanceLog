@@ -1,0 +1,51 @@
+﻿@using MaintenanceLog.Data.Entities
+
+@typeparam TItem where TItem : IScheduledEntity
+
+<button type="button" class="btn btn-primary" @onclick="@OnSmartAssist">
+    ✨ Smart Scheduler
+</button>
+
+@code
+{
+    [Parameter]
+    public TItem? Item { get; set; }
+
+    private string humanizedCronSchedule = string.Empty;
+    private string aiResultText = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (Item is null)
+        {
+            throw new ArgumentNullException(nameof(Item));
+        }
+        if (!string.IsNullOrWhiteSpace(Item.CronSchedule))
+        {
+            humanizedCronSchedule = CronExpressionDescriptor.ExpressionDescriptor.GetDescription(Item.CronSchedule ?? "");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnSmartAssist()
+    {
+        var prompts = new List<string>
+        {
+            $"Given typical situations, how frequently should \"{Item!.Name}\" happen? Please return your response as just a Cron expression.",
+            "Do not use any human language.",
+            "Assume a person's day starts at 9AM local time."
+        };
+        var prompt = string.Join(" ", prompts);
+
+        // CronSchedule = await SmartAssistService.GetCronSchedule(ItemName);
+        Item.CronSchedule = "30 9 * * TUE";
+
+        return;
+    }
+
+}

@@ -69,14 +69,12 @@
                 <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="isAdvancedCron" /> Advanced Edit?
             </div>
 
-            <!-- if toggle is checked, show InputText, otherwise, show AI powered editor -->
+            <SmartCronScheduleEditor Item="taskDefinition" />
+
+            <!-- if toggle is checked, show InputText -->
             @if (isAdvancedCron)
             {
                 <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
-            }
-            else
-            {
-                @* <CronScheduleEditor CronSchedule="@taskDefinition.CronSchedule" OnChange="@((cron) => taskDefinition.CronSchedule = cron)" /> *@
             }
 
             <div>

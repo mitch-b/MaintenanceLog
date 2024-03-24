@@ -2,7 +2,7 @@
 
 namespace MaintenanceLog.Data.Entities;
 
-public class TaskDefinition : BaseEntity
+public class TaskDefinition : BaseEntity, IScheduledEntity
 {
     [StringLength(500, ErrorMessage = "Task definition name cannot exceed 500 characters.")]
     public required string Name { get; set; }
