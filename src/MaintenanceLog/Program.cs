@@ -92,10 +92,8 @@ else
 
 // This section sets up and seeds the database. Seeding is NOT normally
 // handled this way in production. 
-await using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
-var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
-var migrator = scope.ServiceProvider.GetService<IMigrator>();
-await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options, migrator);
+var options = app.Services.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
+await MaintenanceLog.DatabaseUtility.EnsureDbCreatedAndSeedWithDefaults(options);
 
 app.MapControllers();
 
