@@ -82,7 +82,7 @@
                 {
                     @if (@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule ?? "") is not null)
                     {
-                        <small class="text-muted">@taskDefinition.Name will run <code>@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule, new CronExpressionDescriptor.Options { Verbose = true })</code></small>
+                        <small class="text-muted">@taskDefinition.Name will run <code>@CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule)</code></small>
                     }
                     else
                     {

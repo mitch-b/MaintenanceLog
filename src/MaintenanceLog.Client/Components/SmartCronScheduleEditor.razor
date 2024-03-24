@@ -2,17 +2,38 @@
 
 @typeparam TItem where TItem : IScheduledEntity
 
-<button type="button" class="btn btn-primary" @onclick="@OnSmartAssist">
-    ✨ Smart Scheduler
-</button>
+
+
+@if (isLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <button type="button" class="btn btn-primary" @onclick="@OnSmartAssist">
+        ✨ Smart Scheduler
+    </button>
+
+    @if (!string.IsNullOrWhiteSpace(humanizedCronSchedule))
+    {
+        <div class="alert alert-info" role="alert">
+            <strong>Schedule:</strong> @humanizedCronSchedule
+        </div>
+    }
+}
 
 @code
 {
     [Parameter]
     public TItem? Item { get; set; }
+    [Parameter]
+    public EventCallback<TItem> DataChangedAsync { get; set; }
 
     private string humanizedCronSchedule = string.Empty;
     private string aiResultText = string.Empty;
+    private bool isLoading = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -42,10 +63,21 @@
         };
         var prompt = string.Join(" ", prompts);
 
+        isLoading = true;
+
         // CronSchedule = await SmartAssistService.GetCronSchedule(ItemName);
         Item.CronSchedule = "30 9 * * TUE";
 
+        humanizedCronSchedule = CronExpressionDescriptor.ExpressionDescriptor.GetDescription(Item.CronSchedule ?? "");
+        
+        await Task.Delay(1500);
+
+        isLoading = false;
+
+        await InvokeAsync(StateHasChanged);
+        await DataChangedAsync.InvokeAsync(Item);
+
+
         return;
     }
-
 }
