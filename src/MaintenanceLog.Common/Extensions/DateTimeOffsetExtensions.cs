@@ -1,21 +1,24 @@
-using Humanizer;
+﻿using Humanizer;
 
 namespace MaintenanceLog.Common.Extensions;
-
 public static class DateTimeOffsetExtensions
 {
-    public static DateTimeOffset ToLocalTime(this DateTimeOffset? dateTimeOffset)
+    public static DateTimeOffset? ToLocalTime(this DateTimeOffset? dateTimeOffset)
     {
+        if (dateTimeOffset is null)
+        {
+            return null;
+        }
         return dateTimeOffset.Value.ToOffset(TimeSpan.FromHours(TimeZoneInfo.Local.GetUtcOffset(dateTimeOffset.Value).Hours));
     }
 
-    public static string ToLocalTimeString(this DateTimeOffset? dateTimeOffset, string format = "g")
+    public static string? ToLocalTimeString(this DateTimeOffset? dateTimeOffset, string format = "g")
     {
-        return ToLocalTime(dateTimeOffset).ToString(format);
+        return ToLocalTime(dateTimeOffset)?.ToString(format);
     }
 
-    public static string ToLocalHumanizedString(this DateTimeOffset? dateTimeOffset)
+    public static string? ToLocalHumanizedString(this DateTimeOffset? dateTimeOffset)
     {
-        return ToLocalTime(dateTimeOffset.Value).Humanize();
+        return ToLocalTime(dateTimeOffset).Humanize();
     }
 }

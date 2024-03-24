@@ -6,6 +6,8 @@ public class TaskDefinition : BaseEntity
 {
     [StringLength(500, ErrorMessage = "Task definition name cannot exceed 500 characters.")]
     public required string Name { get; set; }
+
+    public string? CronSchedule { get; set; }
     
     public int TaskTypeId { get; set; }
     public TaskType? TaskType { get; set; }

@@ -34,6 +34,7 @@
     * **`TaskType`**
     * **`Asset`(s)**
     * Task name
+    * CronSchedule (CronString AI derived & explained?)
 * (Phase1) `TaskInstance`
   * An instance of a **`TaskDefinition`**.
   * Can be auto-generated when a required lifespan hits.
@@ -48,6 +49,14 @@
     * Duration (Self-Recorded)
     * DueByDate
     * MQTT-enabled (can be _Phase4_)
+* (Phase2) Schedule
+  * Automatically create a **TaskInstance** when a **TaskDefinition** is due.
+  * Automatically create a **TaskInstance** when a **Part** is due for replacement.
+  * Properties:
+    * CronSchedule
+    * TaskDefinition(s)
+    * Part
+    * AutoAssignToUser
 * (Phase2) `TaskDefinitionSteps`
   * _ie, for 'Clean Room', steps may be 'Organize books', 'Clear dresser', 'Hang clothes', etc. ..._
   * `TaskDefinitionStep`s are associated under **`TaskDefinition`s**
@@ -81,9 +90,6 @@
     * Notes
     * Vendor/Store
 * Notification?
-* Schedule?
-  * Automatically create a **TaskInstance** when a **TaskDefinition** is due.
-  * Automatically create a **TaskInstance** when a **Part** is due for replacement.
 * User-Defined Fields
   * Installations can define custom fields for:
     * **Property**

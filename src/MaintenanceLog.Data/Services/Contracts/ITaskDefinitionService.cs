@@ -1,4 +1,4 @@
-using MaintenanceLog.Data.Entities;
+﻿using MaintenanceLog.Data.Entities;
 
 namespace MaintenanceLog.Data.Services.Contracts
 {

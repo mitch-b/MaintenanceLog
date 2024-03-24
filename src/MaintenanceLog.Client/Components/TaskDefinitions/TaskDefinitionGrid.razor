@@ -1,4 +1,6 @@
-﻿@using MaintenanceLog.Data.Entities
+﻿@using MaintenanceLog.Common.Extensions
+@using MaintenanceLog.Data.Entities
+@using MaintenanceLog.Data.Extensions
 @using MaintenanceLog.Data.Services.Contracts
 
 @inject IJSRuntime JsRuntime
@@ -14,6 +16,7 @@
             <tr>
                 <th>Start</th>
                 <th>Name</th>
+                <th>Upcoming</th>
                 <th>Asset</th>
                 <th>Area</th>
                 <th>Actions</th>
@@ -32,6 +35,18 @@
                         </button>
                     </td>
                     <td><a href="@($"/task-definitions/edit/{taskDefinition.Id}")">@taskDefinition.Name</a></td>
+                    <td>
+                        @if (string.IsNullOrWhiteSpace(taskDefinition.CronSchedule))
+                        {
+                            <span class="badge bg-danger">Manual</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-info">
+                                @taskDefinition.GetNextScheduledDate().ToLocalHumanizedString()
+                            </span>
+                        }
+                    </td>
                     <td>@taskDefinition.Asset?.Name</td>
                     <td>@taskDefinition.Area?.Name</td>
                     <td>
