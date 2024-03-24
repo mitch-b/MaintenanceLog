@@ -1,4 +1,5 @@
-﻿@using MaintenanceLog.Data.Entities
+﻿@using MaintenanceLog.Common.Contracts
+@using MaintenanceLog.Data.Entities
 
 @typeparam TItem where TItem : IScheduledEntity
 
@@ -13,13 +14,6 @@ else
     <button type="button" class="btn btn-primary" @onclick="@OnSmartAssist">
         ✨ Smart Scheduler
     </button>
-
-    @if (!string.IsNullOrWhiteSpace(humanizedCronSchedule))
-    {
-        <div class="alert alert-info" role="alert">
-            <strong>Schedule:</strong> @humanizedCronSchedule
-        </div>
-    }
 }
 
 @code
@@ -29,7 +23,6 @@ else
     [Parameter]
     public EventCallback<TItem> DataChangedAsync { get; set; }
 
-    private string humanizedCronSchedule = string.Empty;
     private string aiResultText = string.Empty;
     private bool isLoading = false;
 
@@ -39,10 +32,6 @@ else
         if (Item is null)
         {
             throw new ArgumentNullException(nameof(Item));
-        }
-        if (!string.IsNullOrWhiteSpace(Item.CronSchedule))
-        {
-            humanizedCronSchedule = CronExpressionDescriptor.ExpressionDescriptor.GetDescription(Item.CronSchedule ?? "");
         }
     }
 
@@ -65,8 +54,6 @@ else
 
         // CronSchedule = await SmartAssistService.GetCronSchedule(ItemName);
         Item.CronSchedule = "30 9 * * TUE";
-
-        humanizedCronSchedule = CronExpressionDescriptor.ExpressionDescriptor.GetDescription(Item.CronSchedule ?? "");
         
         await Task.Delay(1500);
 

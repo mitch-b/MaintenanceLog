@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MaintenanceLog.Common.Contracts;
 
 namespace MaintenanceLog.Data.Entities;
 
