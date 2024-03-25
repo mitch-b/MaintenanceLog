@@ -10,13 +10,15 @@ public class OpenAISmartScheduleService(IOpenAIService openAIService) : ISmartSc
     {
         var prompts = overridePrompts ?? 
         [
-            $"Given typical situations, how frequently should \"{itemName}\" happen? Please return your response as just a Cron expression.",
+            "You help return Cron expressions based on questions.",
+            "Please return your response as just a Cron expression.",
             "Do not use any human language.",
-            "Assume a person's day starts at 9AM local time."
+            "Assume a person's day starts at 9AM local time.",
+            $"Given typical situations, how frequently should \"{itemName}\" happen?"
         ];
         var response = await _openAIService.GenerateCompletionAsync(
-            "gpt-3.5-turbo", 
-            string.Join(" ", prompts), 
+            "gpt-3.5-turbo",
+            [.. prompts], 
             temperature: 0.7, 
             maxTokens: 1000);
         return response;

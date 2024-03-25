@@ -47,8 +47,8 @@ else
         isLoading = true;
 
         aiResultText = await SmartScheduleService.EstimateCronScheduleForItem(Item.Name);
-
-        if (string.IsNullOrWhiteSpace(aiResultText) == false)
+        Item.CronSchedule = aiResultText;
+        /*if (string.IsNullOrWhiteSpace(aiResultText) == false)
         {
             // loop through each line in response and grab one that looks like a cron expression
             var lines = aiResultText.Split('\n');
@@ -72,7 +72,7 @@ else
         {
             // TODO: alert user via JSInterop that AI failed to respond
             Item.CronSchedule = null;
-        }
+        }*/
 
         isLoading = false;
 
