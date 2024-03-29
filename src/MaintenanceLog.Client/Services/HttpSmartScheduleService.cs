@@ -1,6 +1,5 @@
 ﻿using MaintenanceLog.Common.Contracts;
 using MaintenanceLog.Common.Models.Requests;
-using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Client;
 
 namespace MaintenanceLog.Client.Services

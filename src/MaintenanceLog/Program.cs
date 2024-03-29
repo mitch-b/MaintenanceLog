@@ -27,6 +27,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 
+// add Swagger services
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "MaintenanceLog", Version = "v1" });
+});
+
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -59,8 +65,6 @@ using (var serviceProvider = builder.Services.BuildServiceProvider())
         ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
     var maintenanceLogSettings = maintenanceLogSettingsOptions.Value;
     
-    Console.WriteLine($"MaintenanceLogSettings: {JsonSerializer.Serialize(maintenanceLogSettings)}");
-    
     var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig.SmtpFrom) 
         ? null 
         : maintenanceLogSettings.EmailConfig.SmtpFrom;
@@ -80,6 +84,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.EnableTryItOutByDefault();
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "MaintenanceLog v1");
+    });
 }
 else
 {

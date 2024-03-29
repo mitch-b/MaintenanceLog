@@ -25,7 +25,7 @@ else
     [Parameter]
     public EventCallback<TItem> DataChangedAsync { get; set; }
 
-    private string aiResultText = string.Empty;
+    private string? aiResultText;
     private bool isLoading = false;
 
     protected override async Task OnParametersSetAsync()
@@ -46,33 +46,8 @@ else
     {
         isLoading = true;
 
-        aiResultText = await SmartScheduleService.EstimateCronScheduleForItem(Item.Name);
+        aiResultText = await SmartScheduleService.EstimateCronScheduleForItem(Item!.Name);
         Item.CronSchedule = aiResultText;
-        /*if (string.IsNullOrWhiteSpace(aiResultText) == false)
-        {
-            // loop through each line in response and grab one that looks like a cron expression
-            var lines = aiResultText.Split('\n');
-            foreach (var line in lines)
-            {
-                try
-                {
-                    if (!string.IsNullOrWhiteSpace(CronExpressionDescriptor.ExpressionDescriptor.GetDescription(line)))
-                    {
-                        Item.CronSchedule = line;
-                        break;
-                    }
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-        }
-        else
-        {
-            // TODO: alert user via JSInterop that AI failed to respond
-            Item.CronSchedule = null;
-        }*/
 
         isLoading = false;
 
