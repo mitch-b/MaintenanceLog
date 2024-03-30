@@ -23,7 +23,7 @@ else
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Smart Assist</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@Cancel"></button>
                 </div>
                 <div class="modal-body p-0">
                     <span>
@@ -44,7 +44,9 @@ else
                                     <td>@step.Name</td>
                                     <td>@step.IsOptional</td>
                                     <td>
-                                        <input type="checkbox" @bind="@step.IsSelected" />
+                                        <div class="form-check form-switch">
+                                            <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="@step.IsSelected" />
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -52,8 +54,8 @@ else
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @onclick="@SaveSteps">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@Cancel">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="@SaveSteps" disabled="@(aiResultSteps.Any(s => s.IsSelected) == false)">Add steps</button>
                 </div>
             </div>
         </div>
@@ -106,7 +108,7 @@ else
         // if user saves, update the task definition with the new steps
         // if user modifies the steps, update the task definition with the new steps
 
-        var suggestedSteps = steps?.Select(s => new SuggestedTaskDefinitionStep(s) { Name = s })?.ToList();
+        var suggestedSteps = steps?.Select(s => new SuggestedTaskDefinitionStep(s) { Name = s, IsSelected = false })?.ToList();
 
         isLoading = false;
 
@@ -120,6 +122,11 @@ else
         aiResultSteps = suggestedSteps;
 
         return;
+    }
+
+    private void Cancel()
+    {
+        aiResultSteps = null;
     }
 
     private async Task SaveSteps()
@@ -155,6 +162,6 @@ else
             this.Name = taskDefinitionStepName;
             this.IsSelected = true;
         }
-        public bool IsSelected { get; set; } = true;
+        public bool IsSelected { get; set; } = false;
     }
 }

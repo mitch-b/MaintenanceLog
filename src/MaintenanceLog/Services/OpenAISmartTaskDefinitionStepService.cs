@@ -9,12 +9,13 @@ public class OpenAISmartTaskDefinitionStepService(IOpenAIService openAIService) 
 
     public async Task<List<string>?> SuggestStepsForTaskDefinition(string? name, string? description = null, IEnumerable<string>? taskDefinitionSteps = null, IEnumerable<string>? overrideSystemPrompts = null)
     {
+        var recommendNumberOfSteps = 5;
         var systemPrompts = overrideSystemPrompts?.ToList() ??
         [
             "You help return broken out steps to complete a Task.",
             "Please return your response in a JSON object of steps.",
-            "Please keep steps concise and clear.",
-            "Return no more than 5 steps.",
+            "Please keep steps concise and clear (around 7 words).",
+            $"Return no more than {recommendNumberOfSteps} steps.",
             $"Format should match the following example for steps to complete a task: {JsonSerializer.Serialize(new SuggestTaskDefinitionStepResponseExample(["Step 1", "Step 2"]))}",
         ];
 
@@ -28,8 +29,10 @@ public class OpenAISmartTaskDefinitionStepService(IOpenAIService openAIService) 
             userPrompt += $"{name} {description}";
         }
 
+        var openAiModel = "gpt-3.5-turbo"; // "gpt-4-turbo-preview";
+
         var responseContent = await _openAIService.GenerateCompletionToJsonAsync(
-            "gpt-3.5-turbo",
+            openAiModel,
             [userPrompt],
             [.. systemPrompts],
             temperature: 0.7,
