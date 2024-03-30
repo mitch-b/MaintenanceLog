@@ -1,0 +1,59 @@
+﻿@using MaintenanceLog.Common.Contracts
+@using MaintenanceLog.Data.Entities
+
+@inject ISmartScheduleService SmartScheduleService
+
+@typeparam TItem where TItem : IScheduledEntity
+
+@if (isLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <button type="button" class="btn btn-primary" @onclick="@OnSmartAssist">
+        ✨ Smart Scheduler
+    </button>
+}
+
+@code
+{
+    [Parameter]
+    public TItem? Item { get; set; }
+    [Parameter]
+    public EventCallback<TItem> DataChangedAsync { get; set; }
+
+    private string? aiResultText;
+    private bool isLoading = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (Item is null)
+        {
+            throw new ArgumentNullException(nameof(Item));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnSmartAssist()
+    {
+        isLoading = true;
+
+        aiResultText = await SmartScheduleService.EstimateCronScheduleForItem(Item!.Name);
+        Item.CronSchedule = aiResultText;
+
+        isLoading = false;
+
+        await InvokeAsync(StateHasChanged);
+        await DataChangedAsync.InvokeAsync(Item);
+
+        return;
+    }
+}

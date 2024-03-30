@@ -8,6 +8,8 @@ maintenancelogdb.db
 maintenancelogdb.db-shm
 maintenancelogdb.db-wal
 
+.mono/
+
 # User-specific files
 *.rsuser
 *.suo

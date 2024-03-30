@@ -1,5 +1,6 @@
 ﻿@page "/task-definitions/edit/{TaskDefinitionId:int}"
 
+@using MaintenanceLog.Client.Components.Schedules
 @using MaintenanceLog.Client.Pages.TaskDefinitionSteps
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
@@ -65,8 +66,28 @@
             </InputSelect>
         </div>
 
+        <!-- CronSchedule -->
+        <div class="form-group">
+            <label for="cronSchedule">Cron Schedule</label>
+            <div class="form-check form-switch">    
+                <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="isAdvancedCron" /> Advanced Edit?
+            </div>
+
+            <SmartCronScheduleEditor Item="taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
+
+            <!-- if toggle is checked, show InputText -->
+            @if (isAdvancedCron)
+            {
+                <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
+            }
+
+            <CronScheduleAlert CronSchedule="@taskDefinition.CronSchedule" />
+        </div>
+
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Save</button>
+        <div class="pt-5">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
     </EditForm>
 
     <TaskDefinitionStepGrid TaskDefinitionId="TaskDefinitionId" />
@@ -85,10 +106,12 @@ else
     private List<Area>? areas;
     private List<TaskType>? taskTypes;
 
+    private bool isAdvancedCron = false;
+
     private List<(string, string?)> Breadcrumbs =>
     [
         ("Task Definitions", "/task-definitions"),
-        (taskName, null)
+    (taskName, null)
     ];
 
     private string taskName => taskDefinition?.Name ?? "Task";
@@ -107,7 +130,17 @@ else
         {
             return;
         }
+        if (string.IsNullOrWhiteSpace(taskDefinition.CronSchedule))
+        {
+            taskDefinition.CronSchedule = null;
+        }
         await TaskDefinitionService.UpdateAsync(taskDefinition);
         NavigationManager.NavigateTo("/task-definitions");
+    }
+
+    private async Task OnDataChanged(TaskDefinition taskDefinition)
+    {
+        this.taskDefinition = taskDefinition;
+        await InvokeAsync(StateHasChanged);
     }
 }

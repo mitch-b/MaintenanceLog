@@ -1,5 +1,6 @@
 @page "/task-definitions/add"
 
+@using MaintenanceLog.Client.Components.Schedules
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
 
@@ -62,8 +63,28 @@
             </InputSelect>
         </div>
 
+        <!-- CronSchedule -->
+        <div class="form-group">
+            <label for="cronSchedule">Cron Schedule</label>
+            <div class="form-check form-switch">
+                <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="isAdvancedCron" /> Advanced Edit?
+            </div>
+
+            <SmartCronScheduleEditor Item="taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
+
+            <!-- if toggle is checked, show InputText -->
+            @if (isAdvancedCron)
+            {
+                <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
+            }
+
+            <CronScheduleAlert CronSchedule="@taskDefinition.CronSchedule" />
+        </div>
+
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Save</button>
+        <div class="pt-5">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
     </EditForm>
 }
 else
@@ -77,6 +98,8 @@ else
     private List<Asset>? assets;
     private List<Area>? areas;
     private List<TaskType>? taskTypes;
+
+    private bool isAdvancedCron = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,5 +121,11 @@ else
         }
         await TaskDefinitionService.AddAsync(taskDefinition);
         NavigationManager.NavigateTo("/task-definitions");
+    }
+
+    private async Task OnDataChanged(TaskDefinition taskDefinition)
+    {
+        this.taskDefinition = taskDefinition;
+        await InvokeAsync(StateHasChanged);
     }
 }

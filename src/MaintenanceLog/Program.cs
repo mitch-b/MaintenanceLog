@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceLog.Common.Models.Configuration;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 using Blazored.LocalStorage;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +25,12 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
+
+// add Swagger services
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "MaintenanceLog", Version = "v1" });
+});
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -49,30 +53,30 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddBlazoredLocalStorage();
 
-builder.Services.AddMaintenanceLogServices();
 builder.Services.AddMaintenanceLogCommonServices(builder.Configuration);
 builder.Services.AddMaintenanceLogDataServices();
+builder.Services.AddMaintenanceLogServices();
 
 // get the MaintenanceLogSettings from the Common project using the builder.Services create scope
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 using (var serviceProvider = builder.Services.BuildServiceProvider())
 {
     var maintenanceLogSettingsOptions = serviceProvider.GetService<IOptions<MaintenanceLogSettings>>()
         ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
     var maintenanceLogSettings = maintenanceLogSettingsOptions.Value;
     
-    Console.WriteLine($"MaintenanceLogSettings: {JsonSerializer.Serialize(maintenanceLogSettings)}");
-    
-    var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig.SmtpFrom) 
+    var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig?.SmtpFrom) 
         ? null 
         : maintenanceLogSettings.EmailConfig.SmtpFrom;
     builder.Services
         .AddFluentEmail(fromAddress)
         .AddSmtpSender(
-            maintenanceLogSettings.EmailConfig.SmtpHost, 
-            maintenanceLogSettings.EmailConfig.SmtpPort ?? 587,
-            maintenanceLogSettings.EmailConfig.SmtpUser,
-            maintenanceLogSettings.EmailConfig.SmtpPass);
+            maintenanceLogSettings.EmailConfig?.SmtpHost, 
+            maintenanceLogSettings.EmailConfig?.SmtpPort ?? 587,
+            maintenanceLogSettings.EmailConfig?.SmtpUser,
+            maintenanceLogSettings.EmailConfig?.SmtpPass);
 }
+#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
 var app = builder.Build();
 
@@ -81,6 +85,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.EnableTryItOutByDefault();
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "MaintenanceLog v1");
+    });
 }
 else
 {

@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using MaintenanceLog.Common.Contracts;
 
 namespace MaintenanceLog.Data.Entities;
 
-public class TaskDefinition : BaseEntity
+public class TaskDefinition : BaseEntity, IScheduledEntity
 {
     [StringLength(500, ErrorMessage = "Task definition name cannot exceed 500 characters.")]
     public required string Name { get; set; }
+
+    public string? CronSchedule { get; set; }
     
     public int TaskTypeId { get; set; }
     public TaskType? TaskType { get; set; }
