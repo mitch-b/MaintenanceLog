@@ -26,6 +26,14 @@ namespace MaintenanceLog.Data.Services.Server
             var result = await context.TaskDefinitionSteps!.FindAsync(id);
             if (result != null)
             {
+                var associatedTaskInstanceSteps = await context.TaskInstanceSteps!
+                    .Where(tis => tis.TaskDefinitionStepId == id)
+                    .ToListAsync();
+                foreach (var taskInstanceStep in associatedTaskInstanceSteps)
+                {
+                    context.TaskInstanceSteps!.Remove(taskInstanceStep);
+                }
+                await context.SaveChangesAsync();
                 context.TaskDefinitionSteps.Remove(result);
                 await context.SaveChangesAsync();
             }

@@ -1,6 +1,7 @@
 ﻿@page "/task-definitions/edit/{TaskDefinitionId:int}"
 
 @using MaintenanceLog.Client.Components.Schedules
+@using MaintenanceLog.Client.Components.TaskDefinitions
 @using MaintenanceLog.Client.Pages.TaskDefinitionSteps
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
@@ -70,15 +71,15 @@
         <div class="form-group">
             <label for="cronSchedule">Cron Schedule</label>
             <div class="form-check form-switch">    
-                <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="isAdvancedCron" /> Advanced Edit?
+                <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="@isAdvancedCron" /> Advanced Edit?
             </div>
 
-            <SmartCronScheduleEditor Item="taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
+            <SmartCronScheduleEditor Item="@taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
 
             <!-- if toggle is checked, show InputText -->
             @if (isAdvancedCron)
             {
-                <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
+                <InputText id="cronSchedule" class="form-control" @bind-Value="@taskDefinition.CronSchedule" />
             }
 
             <CronScheduleAlert CronSchedule="@taskDefinition.CronSchedule" />
@@ -90,7 +91,9 @@
         </div>
     </EditForm>
 
-    <TaskDefinitionStepGrid TaskDefinitionId="TaskDefinitionId" />
+    <TaskDefinitionStepGrid TaskDefinitionId="@TaskDefinitionId" />
+    <br />
+    <SmartTaskDefinitionStepEditor TaskDefinition="@taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
 }
 else
 {
@@ -141,6 +144,7 @@ else
     private async Task OnDataChanged(TaskDefinition taskDefinition)
     {
         this.taskDefinition = taskDefinition;
+        StateHasChanged();
         await InvokeAsync(StateHasChanged);
     }
 }

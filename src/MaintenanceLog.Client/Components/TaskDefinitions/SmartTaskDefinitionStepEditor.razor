@@ -1,0 +1,171 @@
+@using MaintenanceLog.Common.Contracts
+@using MaintenanceLog.Data.Entities
+
+@inject ISmartTaskDefinitionStepService SmartTaskDefinitionStepService
+
+@if (isLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <button type="button" class="btn btn-primary" @onclick="@OnSmartAssist">
+        ✨ Recommend Steps
+    </button>
+}
+
+@if (aiResultSteps is not null)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Smart Assist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@Cancel"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <span>
+                        Add the following steps to your task:
+                    </span>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Is Optional</th>
+                                <th scope="col">Is Selected</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var step in aiResultSteps)
+                            {
+                                <tr>
+                                    <td>@step.Name</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            @* <InputCheckbox class="form-check-input" Value="@step.IsOptional" /> shouldn't be nullable *@
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <InputCheckbox class="form-check-input" @bind-Value="@step.IsSelected" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@Cancel">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="@SaveSteps" disabled="@(aiResultSteps.Any(s => s.IsSelected) == false)">Add steps</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public TaskDefinition? TaskDefinition { get; set; }
+    [Parameter]
+    public EventCallback<TaskDefinition> DataChangedAsync { get; set; }
+
+    private List<SuggestedTaskDefinitionStep>? aiResultSteps;
+    private bool isLoading = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (TaskDefinition is null)
+        {
+            throw new ArgumentNullException(nameof(TaskDefinition));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnSmartAssist()
+    {
+        isLoading = true;
+
+        string taskDescriptor = string.Empty;
+        if (!string.IsNullOrWhiteSpace(TaskDefinition!.Area?.Name))
+        {
+            taskDescriptor += $"in {TaskDefinition.Area.Name}";
+        }
+        if (!string.IsNullOrWhiteSpace(TaskDefinition!.Asset?.Name))
+        {
+            taskDescriptor += $" for {TaskDefinition.Asset.Name}";
+        }
+
+        var steps = await SmartTaskDefinitionStepService.SuggestStepsForTaskDefinition(TaskDefinition!.Name, taskDescriptor, TaskDefinition!.TaskDefinitionSteps?.Select(s => s.Name));
+
+        // show modal with steps that user can check to include (default check them all)
+        // then save the steps to the task definition
+        // if user cancels, do nothing
+        // if user saves, update the task definition with the new steps
+        // if user modifies the steps, update the task definition with the new steps
+
+        var suggestedSteps = steps?.Select(s => new SuggestedTaskDefinitionStep(s) { Name = s, IsSelected = false })?.ToList();
+
+        isLoading = false;
+
+        if (suggestedSteps is null)
+        {
+            // do something about this?
+            return;
+        }
+
+        // populating aiResultSteps will show the modal
+        aiResultSteps = suggestedSteps;
+
+        return;
+    }
+
+    private void Cancel()
+    {
+        aiResultSteps = null;
+    }
+
+    private async Task SaveSteps()
+    {
+        if (aiResultSteps is null)
+        {
+            return;
+        }
+
+        var selectedSteps = aiResultSteps.Where(s => s.IsSelected).ToList();
+        TaskDefinition!.TaskDefinitionSteps ??= new List<TaskDefinitionStep>();
+        
+        foreach (var step in selectedSteps)
+        {
+            TaskDefinition.TaskDefinitionSteps.Add(new TaskDefinitionStep
+            {
+                Name = step.Name,
+                IsOptional = step.IsOptional
+            });
+        }
+
+        aiResultSteps = null;
+        await DataChangedAsync.InvokeAsync(TaskDefinition);
+    }
+
+    // AI response will populate into this object
+    // and allow user to modify IsSelected to determine what is 
+    // added to the TaskDefinition
+    class SuggestedTaskDefinitionStep : TaskDefinitionStep
+    {
+        public SuggestedTaskDefinitionStep(string taskDefinitionStepName)
+        {
+            this.Name = taskDefinitionStepName;
+            this.IsSelected = true;
+        }
+        public bool IsSelected { get; set; } = false;
+    }
+}

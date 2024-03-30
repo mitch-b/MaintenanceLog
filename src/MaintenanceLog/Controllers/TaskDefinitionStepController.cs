@@ -1,4 +1,7 @@
-﻿using MaintenanceLog.Data.Entities;
+﻿using MaintenanceLog.Common.Contracts;
+using MaintenanceLog.Common.Models.Requests;
+using MaintenanceLog.Common.Models.Responses;
+using MaintenanceLog.Data.Entities;
 using MaintenanceLog.Data.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +17,19 @@ namespace MaintenanceLog.Controllers
         private readonly ITaskDefinitionService _taskDefinitionService;
         private readonly ITaskInstanceService _taskInstanceService;
         private readonly ITaskInstanceStepService _taskInstanceStepService;
+        private readonly ISmartTaskDefinitionStepService _smartTaskDefinitionStepService;
         public TaskDefinitionStepController(
             ITaskDefinitionStepService taskDefinitionStepService,
             ITaskDefinitionService taskDefinitionService,
             ITaskInstanceService taskInstanceService,
-            ITaskInstanceStepService taskInstanceStepService)
+            ITaskInstanceStepService taskInstanceStepService,
+            ISmartTaskDefinitionStepService smartTaskDefinitionStepService)
         {
             _taskDefinitionStepService = taskDefinitionStepService;
             _taskDefinitionService = taskDefinitionService;
             _taskInstanceService = taskInstanceService;
             _taskInstanceStepService = taskInstanceStepService;
+            _smartTaskDefinitionStepService = smartTaskDefinitionStepService;
         }
 
         [HttpGet]
@@ -79,6 +85,18 @@ namespace MaintenanceLog.Controllers
                 TaskInstanceId = taskInstanceId,
             };
             return Ok(await _taskInstanceStepService.AddAsync(taskInstanceStep));
+        }
+
+        [HttpPost]
+        [Route("suggest")]
+        public async Task<ActionResult<List<string>>> EstimateTaskDefinitionSteps([FromBody] SuggestTaskDefinitionStepsRequest request)
+        {
+            var suggestedSteps = await _smartTaskDefinitionStepService.SuggestStepsForTaskDefinition(request.Name, request.Description, request.Steps, request.OverrideSystemPrompts);
+            if (suggestedSteps is null)
+            {
+                return BadRequest("Unable to suggest any steps.");
+            }
+            return Ok(new SuggestTaskDefinitionStepsResponse { Steps = suggestedSteps });
         }
     }
 }
