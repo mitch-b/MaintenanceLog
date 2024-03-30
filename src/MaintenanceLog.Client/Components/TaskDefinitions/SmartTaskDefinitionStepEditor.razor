@@ -89,7 +89,16 @@ else
     {
         isLoading = true;
 
-        aiResultSteps = await SmartTaskDefinitionStepService.SuggestStepsForTaskDefinition(TaskDefinition!.Name, TaskDefinition!.Description, TaskDefinition!.TaskDefinitionSteps);
+        string taskMeta = string.Empty;
+        if (!string.IsNullOrWhiteSpace(TaskDefinition!.Area?.Name))
+        {
+            taskMeta += $"in {TaskDefinition.Area.Name}";
+        }
+        if (!string.IsNullOrWhiteSpace(TaskDefinition!.Asset?.Name))
+        {
+            taskMeta += $" for {TaskDefinition.Asset.Name}";
+        }
+        aiResultSteps = await SmartTaskDefinitionStepService.SuggestStepsForTaskDefinition(TaskDefinition!.Name, taskMeta, TaskDefinition!.TaskDefinitionSteps?.Select(s => s.Name)?.ToList());
         
         // show modal with steps that user can check to include (default check them all)
         // then save the steps to the task definition
