@@ -1,0 +1,53 @@
+﻿@using CronExpressionDescriptor
+
+@if (!string.IsNullOrWhiteSpace(Description))
+{
+    <div class="alert alert-info" role="alert">
+        <strong>Schedule:</strong> @Description
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(ErrorDetails))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> @ErrorDetails
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public string? CronSchedule { get; set; }
+    [Parameter]
+    public bool ShowErrorDetails { get; set; } = true;
+
+    private string? Description;
+    private string? ErrorDetails;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+        SetDescription(CronSchedule);
+    }
+
+    private void SetDescription(string? cronSchedule)
+    {
+        if (!string.IsNullOrWhiteSpace(cronSchedule))
+        {
+            try
+            {
+                Description = ExpressionDescriptor.GetDescription(cronSchedule);
+                ErrorDetails = null;
+            }
+            catch (Exception ex)
+            {
+                Description = null;
+                ErrorDetails = ex.Message;
+            }
+        }
+        else
+        {
+            Description = null;
+            ErrorDetails = null;
+        }
+    }
+}

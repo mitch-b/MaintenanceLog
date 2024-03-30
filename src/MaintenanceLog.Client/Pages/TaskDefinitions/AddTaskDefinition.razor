@@ -1,5 +1,6 @@
 @page "/task-definitions/add"
 
+@using MaintenanceLog.Client.Components.Schedules
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
 
@@ -76,24 +77,8 @@
             {
                 <InputText id="cronSchedule" class="form-control" @bind-Value="taskDefinition.CronSchedule" />
             }
-            @try
-            {
-                @if (!string.IsNullOrWhiteSpace(CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule ?? "")))
-                {
-                    <div class="alert alert-info" role="alert">
-                        <strong>Schedule:</strong> @CronExpressionDescriptor.ExpressionDescriptor.GetDescription(taskDefinition.CronSchedule ?? "")
-                    </div>
-                }
-            }
-            catch (Exception ex)
-            {
-                @if (!string.IsNullOrWhiteSpace(taskDefinition.CronSchedule))
-                {
-                    <div class="alert alert-danger" role="alert">
-                        <strong>Error:</strong> Invalid Cron Expression: @ex.Message
-                    </div>
-                }
-            }
+
+            <CronScheduleAlert CronSchedule="@taskDefinition.CronSchedule" />
         </div>
 
         <!-- Submit Button -->

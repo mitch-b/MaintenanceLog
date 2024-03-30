@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceLog.Common.Models.Configuration;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,23 +58,25 @@ builder.Services.AddMaintenanceLogDataServices();
 builder.Services.AddMaintenanceLogServices();
 
 // get the MaintenanceLogSettings from the Common project using the builder.Services create scope
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 using (var serviceProvider = builder.Services.BuildServiceProvider())
 {
     var maintenanceLogSettingsOptions = serviceProvider.GetService<IOptions<MaintenanceLogSettings>>()
         ?? throw new InvalidOperationException("MaintenanceLogSettings not found.");
     var maintenanceLogSettings = maintenanceLogSettingsOptions.Value;
     
-    var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig.SmtpFrom) 
+    var fromAddress = string.IsNullOrWhiteSpace(maintenanceLogSettings.EmailConfig?.SmtpFrom) 
         ? null 
         : maintenanceLogSettings.EmailConfig.SmtpFrom;
     builder.Services
         .AddFluentEmail(fromAddress)
         .AddSmtpSender(
-            maintenanceLogSettings.EmailConfig.SmtpHost, 
-            maintenanceLogSettings.EmailConfig.SmtpPort ?? 587,
-            maintenanceLogSettings.EmailConfig.SmtpUser,
-            maintenanceLogSettings.EmailConfig.SmtpPass);
+            maintenanceLogSettings.EmailConfig?.SmtpHost, 
+            maintenanceLogSettings.EmailConfig?.SmtpPort ?? 587,
+            maintenanceLogSettings.EmailConfig?.SmtpUser,
+            maintenanceLogSettings.EmailConfig?.SmtpPass);
 }
+#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 
 var app = builder.Build();
 
