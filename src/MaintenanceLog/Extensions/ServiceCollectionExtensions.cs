@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IOpenAIService, OpenAIService>();
         services.AddScoped<ISmartScheduleService, OpenAISmartScheduleService>();
+        services.AddScoped<ISmartTaskDefinitionStepService, OpenAISmartTaskDefinitionStepService>();
 
         return services;
     }

@@ -2,7 +2,6 @@
 @using MaintenanceLog.Data.Entities
 
 @inject ISmartTaskDefinitionStepService SmartTaskDefinitionStepService
-@inject ITaskDefinitionStepService TaskDefinitionStepService
 
 @if (isLoading)
 {
@@ -89,26 +88,33 @@ else
     {
         isLoading = true;
 
-        string taskMeta = string.Empty;
+        string taskDescriptor = string.Empty;
         if (!string.IsNullOrWhiteSpace(TaskDefinition!.Area?.Name))
         {
-            taskMeta += $"in {TaskDefinition.Area.Name}";
+            taskDescriptor += $"in {TaskDefinition.Area.Name}";
         }
         if (!string.IsNullOrWhiteSpace(TaskDefinition!.Asset?.Name))
         {
-            taskMeta += $" for {TaskDefinition.Asset.Name}";
+            taskDescriptor += $" for {TaskDefinition.Asset.Name}";
         }
-        aiResultSteps = await SmartTaskDefinitionStepService.SuggestStepsForTaskDefinition(TaskDefinition!.Name, taskMeta, TaskDefinition!.TaskDefinitionSteps?.Select(s => s.Name)?.ToList());
-        
+
+        var steps = await SmartTaskDefinitionStepService.SuggestStepsForTaskDefinition(TaskDefinition!.Name, taskDescriptor, TaskDefinition!.TaskDefinitionSteps?.Select(s => s.Name));
+
         // show modal with steps that user can check to include (default check them all)
         // then save the steps to the task definition
         // if user cancels, do nothing
         // if user saves, update the task definition with the new steps
         // if user modifies the steps, update the task definition with the new steps
 
-        var suggestedSteps = aiResultSteps.Select(s => new SuggestedTaskDefinitionStep(s) { Name = s.Name }).ToList();
+        var suggestedSteps = steps?.Select(s => new SuggestedTaskDefinitionStep(s) { Name = s })?.ToList();
 
         isLoading = false;
+
+        if (suggestedSteps is null)
+        {
+            // do something about this?
+            return;
+        }
 
         // populating aiResultSteps will show the modal
         aiResultSteps = suggestedSteps;
@@ -144,11 +150,9 @@ else
     // added to the TaskDefinition
     class SuggestedTaskDefinitionStep : TaskDefinitionStep
     {
-        public SuggestedTaskDefinitionStep(TaskDefinitionStep taskDefinitionStep)
+        public SuggestedTaskDefinitionStep(string taskDefinitionStepName)
         {
-            this.Id = taskDefinitionStep.Id;
-            this.Name = taskDefinitionStep.Name;
-            this.IsOptional = taskDefinitionStep.IsOptional;
+            this.Name = taskDefinitionStepName;
             this.IsSelected = true;
         }
         public bool IsSelected { get; set; } = true;

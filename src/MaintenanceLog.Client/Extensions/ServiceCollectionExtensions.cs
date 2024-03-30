@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(http => new HttpClient { BaseAddress = new Uri(hostBuilder.HostEnvironment.BaseAddress) });
 
         services.AddScoped<ISmartScheduleService, HttpSmartScheduleService>();
+        services.AddScoped<ISmartTaskDefinitionStepService, HttpSmartTaskDefinitionStepService>();
 
         return services;
     }
