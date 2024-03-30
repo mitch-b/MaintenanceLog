@@ -1,6 +1,7 @@
 ﻿@page "/task-definitions/edit/{TaskDefinitionId:int}"
 
 @using MaintenanceLog.Client.Components.Schedules
+@using MaintenanceLog.Client.Components.TaskDefinitions
 @using MaintenanceLog.Client.Pages.TaskDefinitionSteps
 @using MaintenanceLog.Data.Entities
 @using MaintenanceLog.Data.Services.Contracts
@@ -91,6 +92,8 @@
     </EditForm>
 
     <TaskDefinitionStepGrid TaskDefinitionId="TaskDefinitionId" />
+
+    <SmartTaskDefinitionStepEditor Item="taskDefinition" DataChangedAsync="async (TaskDefinition td) => await OnDataChanged(td)" />
 }
 else
 {
