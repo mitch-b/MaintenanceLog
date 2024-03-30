@@ -1,5 +1,6 @@
 ﻿using MaintenanceLog.Common.Contracts;
 using MaintenanceLog.Common.Models.Requests;
+using MaintenanceLog.Common.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,12 @@ namespace MaintenanceLog.Controllers
         [Route("estimate-cron-schedule")]
         public async Task<ActionResult<string?>> EstimateCronSchedule(EstimateCronScheduleRequest requestModel)
         {
-            return Ok(await _smartScheduleService.EstimateCronScheduleForItem(requestModel.ItemName, requestModel.OverridePrompts));
+            var estimatedCronSchedule = await _smartScheduleService.EstimateCronScheduleForItem(requestModel.ItemName, requestModel.OverrideSystemPrompts);
+            if (string.IsNullOrWhiteSpace(estimatedCronSchedule))
+            {
+                return BadRequest("Unable to estimate a Cron schedule for the given item.");
+            }
+            return Ok(new EstimateCronScheduleResponse { CronExpression = estimatedCronSchedule });
         }
     }
 }

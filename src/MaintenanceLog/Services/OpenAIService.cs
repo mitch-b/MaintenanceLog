@@ -2,7 +2,7 @@
 
 public interface IOpenAIService
 {
-    Task<string> GenerateCompletionAsync(string model, List<string> prompt, double temperature = 0.7, int maxTokens = 1000);
+    Task<string> GenerateCompletionToJsonAsync(string model, List<string> prompts, List<string>? systemPrompts = null, double temperature = 0.7, int maxTokens = 1000);
 }
 
 public class OpenAIService : IOpenAIService
@@ -14,20 +14,31 @@ public class OpenAIService : IOpenAIService
         _httpClient = httpClientFactory.CreateClient("OpenAI");
     }
 
-    public async Task<string> GenerateCompletionAsync(string model, List<string> prompt, double temperature = 0.7, int maxTokens = 1000)
+    public async Task<string> GenerateCompletionToJsonAsync(string model, List<string> prompts, List<string>? systemPrompts = null, double temperature = 0.7, int maxTokens = 1000)
     {
         // https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
-        if (!prompt.Any(p => p.Contains("json", StringComparison.OrdinalIgnoreCase)))
+        // check both prompts and systemPrompts to ensure they include a JSON response format. one of them must include it (but not necessarily both)
+        if (!prompts.Any(x => x.Contains("JSON", StringComparison.OrdinalIgnoreCase)) && (systemPrompts == null || !systemPrompts.Any(x => x.Contains("JSON", StringComparison.OrdinalIgnoreCase))))
         {
-            throw new ArgumentException("Prompt must instruct including a JSON response format");
+            throw new ArgumentException("Prompt (user or system) must instruct including a JSON response format");
         }
 
         var messages = new List<Message>();
-        for (var i = 0; i < prompt.Count - 1; i++)
+
+        if (systemPrompts != null)
         {
-            messages.Add(new Message { Role = "system", Content = prompt[i] });
+            foreach (var systemPrompt in systemPrompts)
+            {
+                messages.Add(new Message { Role = "system", Content = systemPrompt });
+            }
         }
-        messages.Add(new Message { Role = "user", Content = prompt.Last() });
+        if (prompts.Count != 0)
+        {
+            foreach (var prompt in prompts)
+            {
+                messages.Add(new Message { Role = "user", Content = prompt });
+            }
+        }
 
         var requestBody = new
         {
@@ -42,7 +53,6 @@ public class OpenAIService : IOpenAIService
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"Raw OpenAI Response: {responseContent}");
 
         return responseContent;
     }
@@ -50,14 +60,14 @@ public class OpenAIService : IOpenAIService
 
 public class Message
 {
-    public string Role { get; set; }
-    public string Content { get; set; }
+    public string? Role { get; set; }
+    public string? Content { get; set; }
 }
 
 public class Choice
 {
     public int Index { get; set; }
-    public Message Message { get; set; }
+    public Message? Message { get; set; }
 }
 
 public class ChatResponse

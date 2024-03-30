@@ -3,5 +3,5 @@
 public record EstimateCronScheduleRequest
 {
     public string? ItemName { get; set; }
-    public string[]? OverridePrompts { get; set; }
+    public string[]? OverrideSystemPrompts { get; set; }
 }
