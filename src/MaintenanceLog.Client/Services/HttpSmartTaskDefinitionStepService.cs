@@ -10,18 +10,18 @@ namespace MaintenanceLog.Client.Services
     {
         private readonly JsonHttpClient _httpClient = httpClient;
 
-        public async Task<List<TaskDefinitionStep>?> SuggestStepsForTaskDefinition(string? itemName, string? description = null, List<TaskDefinitionStep>? taskDefinitionSteps = null)        
+        public async Task<List<string>?> SuggestStepsForTaskDefinition(string? itemName, string? description = null, List<string>? taskDefinitionSteps = null)        
         {
             var response = await _httpClient.PostAsJsonAsync<SuggestTaskDefinitionStepsRequest, SuggestTaskDefinitionStepsResponse>("api/task-definitions/estimate-task-definition-steps", 
                 new SuggestTaskDefinitionStepsRequest
                 {
                     ItemName = itemName,
                     Description = description,
-                    TaskDefinitionSteps = taskDefinitionSteps
+                    Steps = taskDefinitionSteps
                 });
             return response is null 
-                ? throw new Exception("API did not return the estimated Cron schedule") 
-                : response.TaskDefinitionSteps;
+                ? throw new Exception("API did not return suggested steps") 
+                : response.Steps;
         }
     }
 }
