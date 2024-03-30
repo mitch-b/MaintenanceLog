@@ -42,10 +42,14 @@ else
                             {
                                 <tr>
                                     <td>@step.Name</td>
-                                    <td>@step.IsOptional</td>
                                     <td>
                                         <div class="form-check form-switch">
-                                            <InputCheckbox id="isAdvancedCron" class="form-check-input" @bind-Value="@step.IsSelected" />
+                                            @* <InputCheckbox class="form-check-input" Value="@step.IsOptional" /> shouldn't be nullable *@
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <InputCheckbox class="form-check-input" @bind-Value="@step.IsSelected" />
                                         </div>
                                     </td>
                                 </tr>
