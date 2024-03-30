@@ -54,17 +54,19 @@ If you're a GitHub user, try in Codespaces!
 
 When in Codespaces, the database starts automatically, so you're instantly ready to go.
 
-After setting up Codespaces secrets in your repo in GitHub, you can apply secrets.
+For even more convenience, I'd recommend going into GitHub's settings for Codespaces in your forked version of the repository so that any generated Codespace will keep your private secrets! 
 
-```bash
-cd src/MaintenanceLog
-dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpUser $EMAILCONFIG_SMTPUSER
-dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpFrom $EMAILCONFIG_SMTPUSER
-dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPass $EMAILCONFIG_SMTPPASS
-dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpHost $EMAILCONFIG_SMTPHOST
-dotnet user-secrets set MaintenanceLogSettings:EmailConfig:SmtpPort $EMAILCONFIG_SMTPPORT
-dotnet user-secrets set MaintenanceLogSettings:Database:Host db
-```
+> Example: `https://github.com/<your-username>/MaintenanceLog/settings/secrets/codespaces`
+
+* MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPFROM
+* MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPUSER
+* MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPHOST
+* MAINTENANCELOGSETTINGS__EMAILCONFIG__SMTPPASS
+* MAINTENANCELOGSETTINGS__OPENAI__APIKEY
+
+When the application runs, it'll see these environment variables and supercede whatever is checked into the `appsettings{.Development}.json` and use your secret values.
+
+### Database Options
 
 To use `sqlite`, use the following appsettings:
 
@@ -156,7 +158,7 @@ For example, `bi-house-gear`, I appended `-nav-menu` to follow convention, and c
 }
 ```
 
-### Secrets Management
+### Manual Secrets Management
 
 ```bash
 cd src/MaintenanceLog
