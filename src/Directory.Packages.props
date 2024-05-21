@@ -19,6 +19,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 </Project>
